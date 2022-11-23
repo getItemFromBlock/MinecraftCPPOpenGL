@@ -170,6 +170,7 @@
     <ClCompile Include="Sources\Entities\EntityLivingBase.cpp" />
     <ClCompile Include="Sources\Entities\PlayerEntity.cpp" />
     <ClCompile Include="Sources\Resources\TextureAtlas.cpp" />
+    <ClCompile Include="Sources\World\ChunkGenerator.cpp" />
     <ClCompile Include="Sources\World\ChunkModel.cpp" />
     <ClCompile Include="Sources\World\World.cpp" />
     <ClCompile Include="Includes\ImGUI\imgui.cpp" />
@@ -288,6 +289,7 @@
     <ClInclude Include="Headers\Blocks\Blocks.hpp" />
     <ClInclude Include="Headers\World\Chunk.hpp" />
     <ClInclude Include="Headers\World\ChunkModel.hpp" />
+    <ClInclude Include="Headers\World\ChunkGenerator.hpp" />
     <ClInclude Include="Headers\World\World.hpp" />
     <ClInclude Include="Includes\ImGUI\imconfig.h" />
     <ClInclude Include="Includes\ImGUI\imgui.h" />

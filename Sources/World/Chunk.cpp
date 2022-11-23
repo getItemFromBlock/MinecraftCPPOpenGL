@@ -20,6 +20,7 @@ World::Chunk::~Chunk()
 
 void World::Chunk::Update(World* worldIn)
 {
+	if (!isReady.load()) return;
 	if (IsDirty)
 	{
 		worldIn->AddToAsyncUpdate(this);
@@ -50,6 +51,15 @@ void World::Chunk::SetBlock(World* worldIn, Core::Maths::Int3D pos, Blocks::Bloc
 					worldIn->UpdateBlockRender(otherPos);
 				}
 	}
+}
+
+void World::Chunk::SetBlockNoUpdate(Core::Maths::Int3D pos, Blocks::Block* block)
+{
+	uint16_t bInd = GetBlockPosCk(pos);
+	content[bInd] = block;
+	uint8_t height = bInd >> 8;
+	uint8_t index = bInd & 0xff;
+	if (height > heightMap[index]) heightMap[index] = height;
 }
 
 uint16_t World::Chunk::GetBlockPosCk(Core::Maths::Int3D blockPos)
@@ -162,7 +172,8 @@ void World::Chunk::GenerateRender(World* worldIn)
 			}
 		}
 	}
-	UpdateRender(worldIn);
+	IsDirty = true;
+	isReady.store(true);
 }
 
 void World::Chunk::Render(Resources::ShaderProgram* shaderProgram, unsigned int& VAOCurrent, const Core::Maths::Mat4D& vp, bool IsShadowMap)

@@ -10,6 +10,7 @@ enum class BLOCK : unsigned int
 	AIR,
 	STONE,
 	COBBLESTONE,
+	DEEPSLATE,
 	BEDROCK,
 	DIRT,
 	GRASS_BLOCK,

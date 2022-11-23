@@ -159,6 +159,8 @@ namespace Core::App
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
+	// TODO remove
+	unsigned int shadowMapID = 0;
 	void App::Update()
 	{
 		Resources::ShaderProgram* MainShader = shaders.GetShaderProgram("default shader");
@@ -213,7 +215,7 @@ namespace Core::App
 			glClearColor(0.0f, 0.125f, 0.443f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 			glClear(GL_DEPTH_BUFFER_BIT);
-
+			shadowMapID = world.shadowMap.GetTextureID();
 			world.player.Update(deltaTime);
 			world.UpdateWorld(glfwGetTime());
 			MainCamera.position = world.player.Position + Core::Maths::Vec3D(0.0f, world.player.EyeHeight, 0.0f);
@@ -271,8 +273,8 @@ namespace Core::App
 
 			glfwSwapBuffers(window);
 		}
+		world.Exit();
 		atlas.UnLoad();
-		world.DeleteChunks();
 		Blocks::BlockRegister::FreeBlocks();
 	}
 
@@ -310,6 +312,7 @@ namespace Core::App
 
 	App::App()
 	{
+		srand(static_cast<unsigned int>(time(NULL)));
 		window = nullptr;
 		windowIcon = nullptr;
 		VAO = 0xffffffff;
@@ -476,6 +479,9 @@ namespace Core::App
 			//Draw FPS
 			ImGui::Text("FPS: %.1f  Min: %.1f  Max: %.1f", fps, minFps, maxFps);
 			frameGraph.Print();
+
+			// Extra debug for fun
+			ImGui::Image((ImTextureID)(size_t)shadowMapID, { 240.0f, 240.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 		}
 		ImGui::End();
 	}

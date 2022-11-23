@@ -3,12 +3,11 @@
 #include <vector>
 #include <unordered_map>
 
-#include <Perlin/PerlinNoise.hpp>
-
 #include "Chunk.hpp"
 #include "Entities/PlayerEntity.hpp"
 #include "LowRenderer/Lightning/ShadowMapBuffer.hpp"
 #include "LowRenderer/Rendering/Camera.hpp"
+#include "ChunkGenerator.hpp"
 
 namespace World
 {
@@ -27,6 +26,7 @@ namespace World
 	{
 	public:
 		World(double initTime, Resources::MeshManager* meshes, Resources::ShaderProgram* mainShader, Resources::ShaderProgram* litShader, int atlas);
+		~World();
 		Entities::PlayerEntity player;
 		unsigned int GetSeed();
 		bool IsPositionLoaded(Core::Maths::Int3D pos);
@@ -37,11 +37,10 @@ namespace World
 		void UpdateWorld(double systemTime);
 		void RenderWorld(unsigned int& VAOCurrent, Resources::ShaderProgram** shaderProgram, const Core::Maths::Mat4D& vp);
 		void UpdateBlockRender(Core::Maths::Int3D pos);
-		void DeleteChunks();
+		void Exit();
 		LowRenderer::Lightning::ShadowMapBuffer shadowMap; // TODO move
 	private:
 		std::unordered_map<Core::Maths::Int3D, Chunk*, Hasher> chunks;
-		std::vector<Chunk*> UpdateList;
 		int64_t worldTime = 0ll;
 		double deltaITime = 0;
 		LowRenderer::Model SunModel;
@@ -49,14 +48,13 @@ namespace World
 		Resources::ShaderProgram* LitShader;
 		LowRenderer::Rendering::Camera RenderCam;
 		int TextureAtlas = 0;
-		unsigned int worldSeed = 0;
-		siv::BasicPerlinNoise<float> noiseA;
+		std::vector<Chunk*> UpdateList;
+		ChunkGenerator generator;
+
 		bool IsChunkLoaded(Core::Maths::Int3D chunkPos);
 		Core::Maths::Int3D GetChunkPos(Core::Maths::Int3D blockPos);
 		Chunk* GetChunk(Core::Maths::Int3D blockPos);
 		Chunk* GetChunkAt(Core::Maths::Int3D chunkPos);
 		void GenerateChunk(Core::Maths::Int3D worldPos);
-		float wFunc(int a, int b);
-		float hFunc(int a, int b, int c);
 	};
 }

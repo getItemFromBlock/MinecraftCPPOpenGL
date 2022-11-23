@@ -33,6 +33,7 @@ void BlockRegister::RegisterBlocks(Resources::TextureAtlas* atlas)
 	(new AirBlock("air")),
 	(new Block("stone"))->SetHardness(3.0f),
 	(new Block("cobblestone"))->SetHardness(3.5f),
+	(new Block("deepslate"))->SetHardness(6.0f),
 	(new Block("bedrock"))->SetUnbreakable(),
 	(new Block("dirt"))->SetHardness(1.0f),
 	(new Block("grass_block"))->SetHardness(1.1f),

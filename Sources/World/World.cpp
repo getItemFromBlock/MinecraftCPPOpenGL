@@ -10,8 +10,6 @@
 World::World::World(double initTime, Resources::MeshManager* meshes, Resources::ShaderProgram* mainShader, Resources::ShaderProgram* litShader, int atlas)
 	: deltaITime(initTime)
 {
-	worldSeed = static_cast<unsigned int>(time(NULL));
-	noiseA = siv::BasicPerlinNoise<float>(worldSeed);
 	SunModel.CreateFrom(meshes->GetModels("DebugPlane").at(0)->model);
 	SunModel.shaderProgram = litShader;
 	MainShader = mainShader;
@@ -24,21 +22,23 @@ World::World::World(double initTime, Resources::MeshManager* meshes, Resources::
 	RenderCam.nearPlane = 1.0f;
 	RenderCam.farPlane = 300.0f;
 	RenderCam.fov = 40.0f;
+
+	generator.InitThread(this);
+
+	GenerateChunk(Core::Maths::Int3D(0, 0, 0));
+	GenerateChunk(Core::Maths::Int3D(-1, 0, 0));
+	GenerateChunk(Core::Maths::Int3D(0, 0, -1));
+	GenerateChunk(Core::Maths::Int3D(-1, 0, -1));
+	player.Position = Core::Maths::Vec3D(0.5f, static_cast<int>(generator.wFunc(0, 0)) + 1.0f, 0.5f);
 }
 
-float World::World::wFunc(int a, int b)
+World::World::~World()
 {
-	return 68 + 5 * noiseA.noise2D(a/16.0f,b/16.0f);
-}
-
-float World::World::hFunc(int a, int b, int c)
-{
-	return noiseA.noise3D(a/16.0f, b/16.0f, c/16.0f);
 }
 
 unsigned int World::World::GetSeed()
 {
-	return worldSeed;
+	return generator.GetWorldSeed();
 }
 
 bool World::World::IsPositionLoaded(Core::Maths::Int3D pos)
@@ -110,33 +110,36 @@ void World::World::AddToAsyncUpdate(Chunk* in)
 void World::World::UpdateWorld(double systemTime)
 {
 	worldTime = static_cast<int64_t>((systemTime - deltaITime) * 20.0);
-	if (chunks.size() == 0)
-	{
-		GenerateChunk(Core::Maths::Int3D(0, 0, 0));
-		GenerateChunk(Core::Maths::Int3D(-1, 0, 0));
-		GenerateChunk(Core::Maths::Int3D(0, 0, -1));
-		GenerateChunk(Core::Maths::Int3D(-1, 0, -1));
-		player.Position = Core::Maths::Vec3D(0.5f, static_cast<int>(wFunc(0,0)) + 1.0f, 0.5f);
-	}
 	Core::Maths::Vec3D tmpPos = player.Position;
 	tmpPos.y = 0;
-	for (signed char i = -1; i < 2; i++)
+	if (generator.inputAccessFlag.load())
 	{
-		for (signed char j = -1; j < 2; j++)
+		for (signed char i = -1; i < 2; i++)
 		{
-			Core::Maths::Int3D chunkPos = GetChunkPos(tmpPos) + Core::Maths::Int3D(i,0,j);
-			auto result = chunks.find(chunkPos);
-			if (result == chunks.end())
+			for (signed char j = -1; j < 2; j++)
 			{
-				GenerateChunk(chunkPos);
+				Core::Maths::Int3D chunkPos = GetChunkPos(tmpPos) + Core::Maths::Int3D(i, 0, j);
+				auto result = chunks.find(chunkPos);
+				if (result == chunks.end())
+				{
+					for (int i = -4; i < 20; i++)
+					{
+						Chunk* ck = new Chunk();
+						chunkPos.y = i;
+						ck->worldPos = chunkPos;
+						generator.InputQueue.push_back(ck);
+						chunks.emplace(chunkPos, ck);
+					}
+				}
 			}
 		}
+		generator.inputAccessFlag.store(false);
 	}
 	Core::Maths::Int3D playerbPos = Core::Maths::Int3D((int)player.Position.x, (int)player.Position.y, (int)player.Position.z);
 	if (playerbPos.y < -96)
 	{
 		player.Velocity.y = 0.0f;
-		player.Position.y = wFunc(playerbPos.x, playerbPos.z) + 1.0f;
+		player.Position.y = generator.wFunc(playerbPos.x, playerbPos.z) + 1.0f;
 	}
 	for (char i = 0; i < 3; i++) if (player.Position[i] < 0.0f) playerbPos[i] -= 1;
 	std::vector<Blocks::Block*> blocks;
@@ -190,7 +193,8 @@ void World::World::RenderWorld(unsigned int& VAOCurrent, Resources::ShaderProgra
 	glClear(GL_DEPTH_BUFFER_BIT);
 	for (auto chunk = chunks.begin(); chunk != chunks.end(); chunk++)
 	{
-		chunk->second->Render(*shaderProgram, VAOCurrent, shadowMatrix, true);
+		if (Core::Maths::Vec3D((chunk->second->getWorldPos() * 16) - player.Position).getLength() < 64)
+			chunk->second->Render(*shaderProgram, VAOCurrent, shadowMatrix, true);
 	}
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	shadowMap.BindForReading();
@@ -223,9 +227,14 @@ void World::World::RenderWorld(unsigned int& VAOCurrent, Resources::ShaderProgra
 	glUniform3f(MainShader->GetLocation(Resources::ShaderData::CameraPosition), pos.x, pos.y, pos.z);
 	for (auto chunk = chunks.begin(); chunk != chunks.end(); chunk++)
 	{
-		chunk->second->Render(*shaderProgram, VAOCurrent, vp, false);
-		if (Core::App::App::IsDebugMode()) Core::Debug::Gizmo::PushElement(Core::Util::Box(Core::Maths::Vec3D(8) + chunk->second->getWorldPos()*16, Core::Maths::Vec3D(16)),
-			Core::Maths::Vec3D(1,1,0), true);
+		if (Core::Maths::Vec3D((chunk->second->getWorldPos() * 16) - player.Position).getLength() < 64)
+		{
+			chunk->second->Render(*shaderProgram, VAOCurrent, vp, false);
+			if (Core::App::App::IsDebugMode())
+			{
+				Core::Debug::Gizmo::PushElement(Core::Util::Box(Core::Maths::Vec3D(8) + chunk->second->getWorldPos() * 16, Core::Maths::Vec3D(16)), Core::Maths::Vec3D(1, 1, 0), true);
+			}
+		}
 	}
 	glUniform1ui(MainShader->GetLocation(Resources::ShaderData::LPointCount), 0);
 	SunModel.modelMat = SunMat;
@@ -246,8 +255,9 @@ void World::World::UpdateBlockRender(Core::Maths::Int3D pos)
 	}
 }
 
-void World::World::DeleteChunks()
+void World::World::Exit()
 {
+	generator.ExitThread();
 	for (auto chunk = chunks.begin(); chunk != chunks.end(); chunk++)
 	{
 		delete chunk->second;
@@ -292,33 +302,7 @@ void World::World::GenerateChunk(Core::Maths::Int3D worldPos)
 		Chunk* ck = new Chunk();
 		worldPos.y = i;
 		ck->worldPos = worldPos;
-		for (unsigned int j = 0; j < 16; j++)
-			for (unsigned int i = 0; i < 16; i++)
-				for (unsigned int k = 0; k < 16; k++)
-				{
-					Core::Maths::Int3D blockPos = Core::Maths::Int3D(i, j, k) + worldPos * 16;
-					float height = wFunc(blockPos.x, blockPos.z);
-					if (blockPos.y == -64)
-					{
-						ck->SetBlock(this, blockPos, Blocks::BlockRegister::GetBlock(BLOCK::BEDROCK), false);
-					}
-					else if (blockPos.y < height)
-					{
-						if (fabsf(hFunc(blockPos.x, blockPos.y, blockPos.z)) > 0.4f) continue;
-						if (blockPos.y < height - 5)
-						{
-							ck->SetBlock(this, blockPos, Blocks::BlockRegister::GetBlock(BLOCK::STONE), false);
-						}
-						else if (blockPos.y < height - 1)
-						{
-							ck->SetBlock(this, blockPos, Blocks::BlockRegister::GetBlock(BLOCK::DIRT), false);
-						}
-						else
-						{
-							ck->SetBlock(this, blockPos, Blocks::BlockRegister::GetBlock(BLOCK::GRASS_BLOCK), false);
-						}
-					}
-				}
+		generator.GenerateChunk(ck);
 		chunks.emplace(worldPos, ck);
 	}
 	for (int i = -4; i < 20; i++)
