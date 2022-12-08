@@ -4,6 +4,11 @@
 #include "Model/EntityModel.hpp"
 #include "Core/Util/HitBox.hpp"
 
+namespace Physics
+{
+	class PhysicsHandler;
+}
+
 namespace Entities
 {
 	class EntityLivingBase : public Entity
@@ -41,6 +46,11 @@ namespace Entities
 		float swimAmount = 0.0f;
 		float animCounter = 0.0f;
 		bool riding = false;
+		EntityLivingBase* ridingEntity = nullptr;
 		float rotlerpRad(float a, float b, float c);
+
+		Vec3 getRidePosition(EntityLivingBase* entity);
+
+		friend class Physics::PhysicsHandler;
 	};
 }

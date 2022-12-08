@@ -103,9 +103,6 @@ void Physics::PhysicsHandler::UpdateEntityPhysics(std::unordered_map<size_t, Ent
 		direction = direction.unitVector();
 		entity->Velocity = entity->Velocity + direction * 0.01f * deltaTime;
 		e->Velocity = e->Velocity - direction * 0.01f * deltaTime;
-		b2.size = b2.size + 0.1f;
-		b2.center = b2.center + e->Position;
-		Core::Debug::Gizmo::PushElement(b2, Vec3(1, 0, 0), true);
 	}
 }
 
@@ -117,14 +114,11 @@ void Physics::PhysicsHandler::UpdateEntityPhysics(std::unordered_map<size_t, Ent
 	for (auto &pair : entities)
 	{
 		Entities::EntityLivingBase* e = pair.second;
-		if (!e || e == entity || e->Position.isNearlyEqual(entity->Position)) continue;
+		if (!e || e == entity || e->Position.isNearlyEqual(entity->Position) || (e->riding && e->ridingEntity == entity) || (entity->riding && entity->ridingEntity == e)) continue;
 		Core::Util::Box b2 = e->GetHitBox();
 		Vec3 max2 = e->Position + b2.center + b2.size / 2.0f;
 		Vec3 min2 = e->Position + b2.center - b2.size / 2.0f;
 		if (max1.x <= min2.x || max2.x <= min1.x || max1.y <= min2.y || max2.y <= min1.y || max1.z <= min2.z || max2.z <= min1.z) continue;
-		b2.size = b2.size + 0.1f;
-		b2.center = b2.center + e->Position;
-		Core::Debug::Gizmo::PushElement(b2, Vec3(1,0,0),true);
 	}
 }
 

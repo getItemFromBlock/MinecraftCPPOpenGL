@@ -28,7 +28,7 @@ namespace Entities
 		virtual void OnDeath() override;
 		virtual void Render(World::World* worldIn, Resources::ShaderProgram* shaderProgram, unsigned int& VAOCurrent, const Core::Maths::Mat4& vp, bool IsShadowMap) override;
 		void ClientUpdate(float deltatime, World::World* world);
-		BLOCK GetSelectedGlock();
+		BLOCK GetSelectedBlock();
 	protected:
 		int* Bindings = nullptr;
 		LowRenderer::Rendering::EditorCamera* camera = nullptr;

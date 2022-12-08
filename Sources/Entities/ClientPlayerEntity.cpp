@@ -104,13 +104,15 @@ void Entities::ClientPlayerEntity::ClientUpdate(float deltatime, World::World* w
 			Core::Debug::OverlayGizmo::PushElement(Core::Util::Box(center, size));
 			if (inputs->leftMouse & INPUT_PRESS)
 			{
-				eResult.target->Jump();
+				riding = true;
+				ridingEntity = eResult.target;
+				//eResult.target->Jump();
 			}
 		}
 	}
 }
 
-BLOCK Entities::ClientPlayerEntity::GetSelectedGlock()
+BLOCK Entities::ClientPlayerEntity::GetSelectedBlock()
 {
 	return selectedBlock;
 }

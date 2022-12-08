@@ -463,7 +463,7 @@ namespace Core::App
 			}
 			if (ImGui::CollapsingHeader("Game", ImGuiTreeNodeFlags_DefaultOpen))
 			{
-				ImGui::Text("Current Block : %s", Blocks::BlockRegister::GetBlock(world->player->GetSelectedGlock())->GetName());
+				ImGui::Text("Current Block : %s", Blocks::BlockRegister::GetBlock(world->player->GetSelectedBlock())->GetName());
 				ImGui::Text("Seed: %lu", seed);
 			}
 			//Draw FPS

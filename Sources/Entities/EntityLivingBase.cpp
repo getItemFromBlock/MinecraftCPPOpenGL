@@ -4,16 +4,30 @@
 
 void Entities::EntityLivingBase::Update(float deltatime)
 {
-	float tmp = Velocity.y;
-	Velocity = Velocity + MovementOut * deltatime * (OnGround ? MovementSpeed * 15.0f : MovementSpeed * 1.5f) * effectiveSpeed;
-	Velocity = Velocity * (OnGround ? 1.0f - 10.0f * deltatime : 1.0f - 1.0f * deltatime);
-	if (OnGround)
+	if (!riding || !ridingEntity)
 	{
-		tmp = 0;
+		ridingEntity = nullptr;
+		float tmp = Velocity.y;
+		Velocity = Velocity + MovementOut * deltatime * (OnGround ? MovementSpeed * 15.0f : MovementSpeed * 1.5f) * effectiveSpeed;
+		Velocity = Velocity * (OnGround ? 1.0f - 10.0f * deltatime : 1.0f - 1.0f * deltatime);
+		if (OnGround)
+		{
+			tmp = 0;
+		}
+		tmp -= GRAVITY * deltatime;
+		Velocity.y = tmp;
+		Position = Position + Velocity * deltatime * 1000;
 	}
-	tmp -= GRAVITY * deltatime;
-	Velocity.y = tmp;
-	Position = Position + Velocity * deltatime * 1000;
+	else
+	{
+		Velocity = Vec3();
+		Position = ridingEntity->getRidePosition(this);
+		if (ridingEntity->Health <= 0.0f)
+		{
+			riding = false;
+			ridingEntity = nullptr;
+		}
+	}
 	Rotation = ViewRotation.y;
 }
 
@@ -71,8 +85,8 @@ bool Entities::EntityLivingBase::isVisuallySwimming()
 	return false;
 }
 
-float Entities::EntityLivingBase::rotlerpRad(float p_102836_, float p_102837_, float p_102838_) {
-	float f = fmodf(p_102838_ - p_102837_, (float)M_PI * 2.0f);
+float Entities::EntityLivingBase::rotlerpRad(float alpha, float min, float max) {
+	float f = fmodf(max - min, (float)M_PI * 2.0f);
 	if (f < -(float)M_PI) {
 		f += ((float)M_PI * 2.0F);
 	}
@@ -81,5 +95,10 @@ float Entities::EntityLivingBase::rotlerpRad(float p_102836_, float p_102837_, f
 		f -= ((float)M_PI * 2.0F);
 	}
 
-	return p_102837_ + p_102836_ * f;
+	return min + alpha * f;
+}
+
+Vec3 Entities::EntityLivingBase::getRidePosition(EntityLivingBase* entity)
+{
+	return Position + Vec3(0, HitBox.size.y, 0);
 }

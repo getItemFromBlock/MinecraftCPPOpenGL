@@ -42,6 +42,11 @@ void Entities::PlayerEntity::Update(float deltatime)
             attackTime = 0.0f;
         }
     }
+    if (riding && crouching)
+    {
+        riding = false;
+        ridingEntity = nullptr;
+    }
 	Entities::EntityLivingBase::Update(deltatime);
 }
 
