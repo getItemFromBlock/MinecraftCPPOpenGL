@@ -17,10 +17,10 @@ namespace Core::Util
 	public:
 		std::vector<Core::Util::Vertice> ShapeData;
 
-		void AddToChunk(Core::Maths::Int3D blockPos, std::vector<Core::Util::Vertice>* vertices) const;
+		void AddToChunk(Core::Maths::IVec3 blockPos, std::vector<Core::Util::Vertice>* vertices) const;
 
 		static void CreateCubeShape(Shape in[6]);
-		static void CreateFaceShape(char side, Shape& in, Core::Maths::Vec3D from, Core::Maths::Vec3D to, Core::Maths::Vec2D uvA, Core::Maths::Vec2D uvB);
+		static void CreateFaceShape(char side, Shape& in, Core::Maths::Vec3 from, Core::Maths::Vec3 to, Core::Maths::Vec2 uvA, Core::Maths::Vec2 uvB);
 	private:
 	};
 }

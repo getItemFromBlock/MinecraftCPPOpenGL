@@ -14,8 +14,8 @@ namespace LowRenderer::Rendering
 		void DeleteCamera() override;
 
 	protected:
-		Core::Maths::Vec3D PlaneNormal;
-		Core::Maths::Vec3D PlaneRight;
-		Core::Maths::Vec3D PlaneUp;
+		Core::Maths::Vec3 PlaneNormal;
+		Core::Maths::Vec3 PlaneRight;
+		Core::Maths::Vec3 PlaneUp;
 	};
 }

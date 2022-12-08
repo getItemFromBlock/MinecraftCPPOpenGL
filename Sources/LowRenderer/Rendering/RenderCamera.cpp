@@ -9,7 +9,7 @@ using namespace Core::Maths;
 
 LowRenderer::Rendering::RenderCamera::RenderCamera()
 {
-	Resolution = Int2D(256, 256);
+	Resolution = IVec2(256, 256);
 }
 
 LowRenderer::Rendering::RenderCamera::~RenderCamera()
@@ -44,12 +44,12 @@ void LowRenderer::Rendering::RenderCamera::Update(std::vector<RenderCamera*>* ca
 			buffer->Init(Resolution.x, Resolution.y, Filter, Wrap);
 		}
 	}
-	Resolution = Int2D(Util::maxI(Resolution.x,1), Util::maxI(Resolution.y, 1));
+	Resolution = IVec2(Util::maxI(Resolution.x,1), Util::maxI(Resolution.y, 1));
 	/*
 	* TODO
 	position = container->GetGlobalMatrix()->GetPositionFromTranslation();
-	Vec3D cameraRot = container->GetGlobalMatrix()->GetRotationFromTranslation(container->GetGlobalMatrix()->GetScaleFromTranslation());
-	rotation = Vec3D(cameraRot.y - 180, cameraRot.x, cameraRot.z);
+	Vec3 cameraRot = container->GetGlobalMatrix()->GetRotationFromTranslation(container->GetGlobalMatrix()->GetScaleFromTranslation());
+	rotation = Vec3(cameraRot.y - 180, cameraRot.x, cameraRot.z);
 	Core::App::Inputs i;
 	i.ScreenSize = Resolution;
 	Camera::Update(i,deltaTime);

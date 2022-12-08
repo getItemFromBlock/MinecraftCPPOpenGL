@@ -2,13 +2,13 @@
 
 #include <ImGUI/imgui.h>
 
-Core::Debug::FrameGraph::FrameGraph(Resources::Texture* output, const Core::Maths::Int2D size, float maxDelta)
+Core::Debug::FrameGraph::FrameGraph(Resources::Texture* output, const Core::Maths::IVec2 size, float maxDelta)
 {
 	graph = output;
 	width = size.x;
 	height = size.y;
 	delta = maxDelta;
-	data = new Core::Maths::UChar4D[1llu * width * height];
+	data = new Core::Maths::Color4[1llu * width * height];
 	UpdateGraph();
 }
 
@@ -35,18 +35,18 @@ void Core::Debug::FrameGraph::Update(float deltaTime)
 		}
 	}
 	float value = Core::Maths::Util::minF(delta, deltaTime);
-	Core::Maths::UChar4D color = Core::Maths::UChar4D(Core::Maths::Vec4D((value-1.0f/60)/delta, 1 - (value - 1.0f / 60) / delta, 0.0f));
+	Core::Maths::Color4 color = Core::Maths::Color4(Core::Maths::Vec4((value-1.0f/60)/delta, 1 - (value - 1.0f / 60) / delta, 0.0f));
 	for (unsigned int i = 0; i < height; i++)
 	{
 		if (i < Core::Maths::Util::cut(1 - value / delta, 0, 1) * height)
-			data[(i + 1) * width - 1] = Core::Maths::UChar4D();
+			data[(i + 1) * width - 1] = Core::Maths::Color4();
 		else
 			data[(i + 1) * width - 1] = color;
 	}
 	if (!pixel)
 	{
-		data[((int)((1 - (1.0f / 60) / delta) * height) + 1) * width - 1] = Core::Maths::UChar4D(63, 63, 255);
-		data[((int)((1 - (1.0f / 30) / delta) * height) + 1) * width - 1] = Core::Maths::UChar4D(255, 255, 63);
+		data[((int)((1 - (1.0f / 60) / delta) * height) + 1) * width - 1] = Core::Maths::Color4(63, 63, 255);
+		data[((int)((1 - (1.0f / 30) / delta) * height) + 1) * width - 1] = Core::Maths::Color4(255, 255, 63);
 	}
 	pixel = (pixel+1)%2;
 	UpdateGraph();

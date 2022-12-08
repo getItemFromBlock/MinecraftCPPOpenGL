@@ -25,7 +25,7 @@ namespace LowRenderer::Lightning
 
         static void SetShadowMapResolution(unsigned int newRes);
 
-        Core::Maths::Mat4D VPLight;
+        Core::Maths::Mat4 VPLight;
 
     private:
         unsigned int FBO = 0;

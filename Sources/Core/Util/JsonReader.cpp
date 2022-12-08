@@ -2,7 +2,7 @@
 
 #include <JSON/json.hpp>
 
-void ReadFaces(nlohmann::json& faces, std::unordered_map<std::string, std::string>* textures, Resources::TextureAtlas* atlas, Core::Util::Shape shapes[7], const Core::Maths::Vec3D& from, const Core::Maths::Vec3D& to);
+void ReadFaces(nlohmann::json& faces, std::unordered_map<std::string, std::string>* textures, Resources::TextureAtlas* atlas, Core::Util::Shape shapes[7], const Core::Maths::Vec3& from, const Core::Maths::Vec3& to);
 char StringToSide(const std::string& value);
 
 bool Core::Util::JsonReader::LoadFile(const std::filesystem::path& path, std::string& out)
@@ -86,9 +86,9 @@ bool Core::Util::JsonReader::ReadBlockShape(Resources::TextureAtlas* atlas, std:
 			for (auto n = elements.begin(); n != elements.end(); n++)
 			{
 				auto y = n->at("from").get<std::vector<int>>();
-				Core::Maths::Vec3D from = Core::Maths::Vec3D((float)y[0], (float)y[1], (float)y[2]) / 16.0f;
+				Core::Maths::Vec3 from = Core::Maths::Vec3((float)y[0], (float)y[1], (float)y[2]) / 16.0f;
 				y = n->at("to").get<std::vector<int>>();
-				Core::Maths::Vec3D to = Core::Maths::Vec3D((float)y[0], (float)y[1], (float)y[2]) / 16.0f;
+				Core::Maths::Vec3 to = Core::Maths::Vec3((float)y[0], (float)y[1], (float)y[2]) / 16.0f;
 				nlohmann::json& faces = n->at("faces");
 				ReadFaces(faces, &textures, atlas, shapeIn, from, to);
 			}
@@ -97,7 +97,7 @@ bool Core::Util::JsonReader::ReadBlockShape(Resources::TextureAtlas* atlas, std:
 	return true;
 }
 
-void GetDefaultUV(char side, std::vector<int>& values, const Core::Maths::Vec3D& from, const Core::Maths::Vec3D& to)
+void GetDefaultUV(char side, std::vector<int>& values, const Core::Maths::Vec3& from, const Core::Maths::Vec3& to)
 {
 	if (side == 0 || side == 3)
 	{
@@ -114,7 +114,7 @@ void GetDefaultUV(char side, std::vector<int>& values, const Core::Maths::Vec3D&
 	}
 }
 
-void ReadFaces(nlohmann::json& faces, std::unordered_map<std::string, std::string>* textures, Resources::TextureAtlas* atlas, Core::Util::Shape shapes[7], const Core::Maths::Vec3D& from, const Core::Maths::Vec3D& to)
+void ReadFaces(nlohmann::json& faces, std::unordered_map<std::string, std::string>* textures, Resources::TextureAtlas* atlas, Core::Util::Shape shapes[7], const Core::Maths::Vec3& from, const Core::Maths::Vec3& to)
 {
 	for (auto f = faces.begin(); f != faces.end(); f++)
 	{
@@ -156,10 +156,10 @@ void ReadFaces(nlohmann::json& faces, std::unordered_map<std::string, std::strin
 		{
 			y = z.get<std::vector<int>>();
 		}
-		Core::Maths::Vec2D min = atlas->GetTexture(tex);
-		Core::Maths::Vec2D max = atlas->GetTextureSize();
-		Core::Maths::Vec2D uvA = Core::Maths::Vec2D((float)y[0llu + (side == 1)], (float)y[1llu - (side == 1)]) / 16.0f;
-		Core::Maths::Vec2D uvB = Core::Maths::Vec2D((float)y[2llu + (side == 1)], (float)y[3llu - (side == 1)]) / 16.0f;
+		Core::Maths::Vec2 min = atlas->GetTexture(tex);
+		Core::Maths::Vec2 max = atlas->GetTextureSize();
+		Core::Maths::Vec2 uvA = Core::Maths::Vec2((float)y[0llu + (side == 1)], (float)y[1llu - (side == 1)]) / 16.0f;
+		Core::Maths::Vec2 uvB = Core::Maths::Vec2((float)y[2llu + (side == 1)], (float)y[3llu - (side == 1)]) / 16.0f;
 		uvA = min + uvA * max;
 		uvB = min + uvB * max;
 		Core::Util::Shape::CreateFaceShape(dir, shapes[side], from, to, uvA, uvB);

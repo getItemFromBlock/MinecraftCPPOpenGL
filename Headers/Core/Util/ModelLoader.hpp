@@ -31,20 +31,20 @@ namespace Core::Util
     class Vertice
     {
     public:
-        Core::Maths::Vec3D pos;
-        Core::Maths::Vec3D norm;
-        Core::Maths::Vec2D UV;
-        Vertice(Core::Maths::Vec3D p, Core::Maths::Vec3D n, Core::Maths::Vec2D u) : pos(p), norm(n), UV(u) {};
+        Core::Maths::Vec3 pos;
+        Core::Maths::Vec3 norm;
+        Core::Maths::Vec2 UV;
+        Vertice(Core::Maths::Vec3 p, Core::Maths::Vec3 n, Core::Maths::Vec2 u) : pos(p), norm(n), UV(u) {};
         Vertice() {};
     };
 
     class TangentVertice
     {
     public:
-        Core::Maths::Vec3D pos;
-        Core::Maths::Vec3D norm;
-        Core::Maths::Vec2D UV;
-        Core::Maths::Vec3D tang;
+        Core::Maths::Vec3 pos;
+        Core::Maths::Vec3 norm;
+        Core::Maths::Vec2 UV;
+        Core::Maths::Vec3 tang;
     };
 
     struct LoaderData
@@ -55,9 +55,9 @@ namespace Core::Util
         std::vector<Resources::Material*>* mats;
         std::vector<std::string>* matIds;
         std::vector<std::vector<Triangle>>* tris;
-        std::vector<Core::Maths::Vec3D>* verts;
-        std::vector<Core::Maths::Vec3D>* norms;
-        std::vector<Core::Maths::Vec2D>* UVs;
+        std::vector<Core::Maths::Vec3>* verts;
+        std::vector<Core::Maths::Vec3>* norms;
+        std::vector<Core::Maths::Vec2>* UVs;
         std::vector<Vertice>* verticesOut;
         std::vector<TangentVertice>* tverticesOut;
         std::vector<VerticeIndex>* indexes;

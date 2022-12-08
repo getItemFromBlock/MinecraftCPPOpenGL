@@ -3,44 +3,41 @@
 #include <vector>
 #include <unordered_map>
 
+#include "Core/Util/PositionHasher.hpp"
 #include "Chunk.hpp"
-#include "Entities/PlayerEntity.hpp"
+#include "Entities/ClientPlayerEntity.hpp"
 #include "LowRenderer/Lightning/ShadowMapBuffer.hpp"
 #include "LowRenderer/Rendering/Camera.hpp"
 #include "ChunkGenerator.hpp"
 
+namespace Physics
+{
+	class PhysicsHandler;
+}
+
 namespace World
 {
-	class Hasher
-	{
-	public:
-		size_t operator()(Core::Maths::Int3D key) const
-		{
-			size_t test = (size_t)(static_cast<uint32_t>(key.y) & 0xffff) |
-				((size_t)(static_cast<uint32_t>(key.x) & 0xffffff) << 16) |
-				((size_t)(static_cast<uint32_t>(key.z) & 0xffffff) << 40);
-			return test;
-		}
-	};
 	class World
 	{
+		friend Physics::PhysicsHandler;
 	public:
 		World(double initTime, Resources::MeshManager* meshes, Resources::ShaderProgram* mainShader, Resources::ShaderProgram* litShader, int atlas);
 		~World();
-		Entities::PlayerEntity player;
+		Entities::ClientPlayerEntity* player;
 		unsigned int GetSeed();
-		bool IsPositionLoaded(Core::Maths::Int3D pos);
-		bool SetBlockAt(Core::Maths::Int3D pos, Blocks::Block* block);
-		Blocks::Block* GetBlockAt(Core::Maths::Int3D pos);
+		bool IsPositionLoaded(Core::Maths::IVec3 pos);
+		bool SetBlockAt(Core::Maths::IVec3 pos, Blocks::Block* block);
+		Blocks::Block* GetBlockAt(Core::Maths::IVec3 pos);
+		Chunk* GetChunk(Core::Maths::IVec3 blockPos);
 		int GetTopBlock(int x, int z);
 		void AddToAsyncUpdate(Chunk* in);
-		void UpdateWorld(double systemTime);
-		void RenderWorld(unsigned int& VAOCurrent, Resources::ShaderProgram** shaderProgram, const Core::Maths::Mat4D& vp);
-		void UpdateBlockRender(Core::Maths::Int3D pos);
+		void UpdateWorld(double systemTime, float deltaTime);
+		void RenderWorld(unsigned int& VAOCurrent, Resources::ShaderProgram** shaderProgram, const Core::Maths::Mat4& vp);
+		void UpdateBlockRender(Core::Maths::IVec3 pos);
 		void Exit();
 		LowRenderer::Lightning::ShadowMapBuffer shadowMap; // TODO move
 	private:
-		std::unordered_map<Core::Maths::Int3D, Chunk*, Hasher> chunks;
+		std::unordered_map<Core::Maths::IVec3, Chunk*, Core::Util::PositionHasher> chunks;
 		int64_t worldTime = 0ll;
 		double deltaITime = 0;
 		LowRenderer::Model SunModel;
@@ -51,10 +48,12 @@ namespace World
 		std::vector<Chunk*> UpdateList;
 		ChunkGenerator generator;
 
-		bool IsChunkLoaded(Core::Maths::Int3D chunkPos);
-		Core::Maths::Int3D GetChunkPos(Core::Maths::Int3D blockPos);
-		Chunk* GetChunk(Core::Maths::Int3D blockPos);
-		Chunk* GetChunkAt(Core::Maths::Int3D chunkPos);
-		void GenerateChunk(Core::Maths::Int3D worldPos);
+		std::unordered_map<size_t, Entities::EntityLivingBase*> entities;
+		std::unordered_map<size_t, Entities::PlayerEntity*> players;
+
+		bool IsChunkLoaded(Core::Maths::IVec3 chunkPos);
+		Core::Maths::IVec3 GetChunkPos(Core::Maths::IVec3 blockPos);
+		Chunk* GetChunkAt(Core::Maths::IVec3 chunkPos);
+		void GenerateChunk(Core::Maths::IVec3 worldPos);
 	};
 }

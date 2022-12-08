@@ -119,10 +119,10 @@ void LowRenderer::Lightning::ShadowMapBuffer::RefreshSize()
 void LowRenderer::Lightning::ShadowMapBuffer::Dump(const char* path)
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO);
-	Core::Maths::UChar4D* buf = new Core::Maths::UChar4D[(size_t)(4llu * Resolution * Resolution)];
+	Core::Maths::Color4* buf = new Core::Maths::Color4[(size_t)(4llu * Resolution * Resolution)];
 	unsigned char* bufTmp = new unsigned char[(size_t)(1llu * Resolution * Resolution)];
 	glReadPixels(0, 0, Resolution, Resolution, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, bufTmp);
-	for (size_t i = 0; i < 1llu * Resolution * Resolution; i++) buf[i] = Core::Maths::UChar4D(bufTmp[i], bufTmp[i], bufTmp[i]);
+	for (size_t i = 0; i < 1llu * Resolution * Resolution; i++) buf[i] = Core::Maths::Color4(bufTmp[i], bufTmp[i], bufTmp[i]);
 	Save(path, reinterpret_cast<unsigned char*>(buf), Resolution, Resolution);
 	delete[] buf;
 	delete[] bufTmp;

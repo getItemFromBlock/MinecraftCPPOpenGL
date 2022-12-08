@@ -10,12 +10,12 @@ namespace Physics
 		Transform();
 		~Transform();
 
-		Core::Maths::Mat4D local = Core::Maths::Mat4D::Identity();
-		Core::Maths::Mat4D global = Core::Maths::Mat4D::Identity();
+		Core::Maths::Mat4 local = Core::Maths::Mat4::Identity();
+		Core::Maths::Mat4 global = Core::Maths::Mat4::Identity();
 
-		Core::Maths::Vec3D position = Core::Maths::Vec3D();
-		Core::Maths::Vec3D rotation = Core::Maths::Vec3D();
-		Core::Maths::Vec3D scale = Core::Maths::Vec3D(1);
+		Core::Maths::Vec3 position = Core::Maths::Vec3();
+		Core::Maths::Vec3 rotation = Core::Maths::Vec3();
+		Core::Maths::Vec3 scale = Core::Maths::Vec3(1);
 
 		void DrawGUI();
 

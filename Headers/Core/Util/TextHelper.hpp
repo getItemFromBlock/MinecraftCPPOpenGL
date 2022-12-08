@@ -25,8 +25,8 @@ namespace Text
 namespace Parsing
 {
     inline bool ReadBool(const char* buff, const int64_t index, const int64_t maxSize, bool& result);
-    inline bool ReadVec3D(const char* buff, int64_t index, const int64_t maxSize, Core::Maths::Vec3D& result);
-    inline bool ReadVec2D(const char* buff, int64_t index, const int64_t maxSize, Core::Maths::Vec2D& result);
+    inline bool ReadVec3(const char* buff, int64_t index, const int64_t maxSize, Core::Maths::Vec3& result);
+    inline bool ReadVec2(const char* buff, int64_t index, const int64_t maxSize, Core::Maths::Vec2& result);
     inline void Shift(std::ofstream& fileOut, unsigned int rec);
 }
 

@@ -22,12 +22,12 @@ Texture::~Texture()
 {
 }
 
-Core::Maths::UChar4D Resources::Texture::ReadPixel(Core::Maths::Int2D pos)
+Core::Maths::Color4 Resources::Texture::ReadPixel(Core::Maths::IVec2 pos)
 {
 	if (!loaded || !ImageData || pos.x >= sizeX || pos.y >= sizeY)
-		return Core::Maths::UChar4D();
+		return Core::Maths::Color4();
 	size_t index = ((size_t)pos.x + ((size_t)sizeX - pos.y - 1) * sizeX) * 4;
-	return Core::Maths::UChar4D(ImageData[index], ImageData[index+1], ImageData[index+2], ImageData[index+3]);
+	return Core::Maths::Color4(ImageData[index], ImageData[index+1], ImageData[index+2], ImageData[index+3]);
 }
 
 void Texture::SetFilterType(unsigned int in)

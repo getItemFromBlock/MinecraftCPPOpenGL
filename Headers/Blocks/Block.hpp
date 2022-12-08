@@ -9,7 +9,7 @@
 
 namespace World
 {
-	class World;
+	class ServerWorld;
 }
 
 namespace Blocks
@@ -27,12 +27,12 @@ namespace Blocks
 		const char* GetName() { return name.c_str(); };
 		virtual bool IsSideFull(Core::Util::Side side) { return true; }
 		virtual bool IsLightBlock() { return false; }
-		virtual Core::Maths::Vec3D GetLightValue() { return Core::Maths::Vec3D(); }
+		virtual Core::Maths::Vec3 GetLightValue() { return Core::Maths::Vec3(); }
 		virtual const Core::Util::Shape& GetFaceShape(Core::Util::Side side);
 		virtual Core::Util::ShapeType GetShapeType();
 		virtual const Core::Util::HitBox& GetHitBox();
 		virtual Core::Util::CollisionType GetCollisionType();
-		virtual void Update(World::World* worldIn, Blocks::Block* other, Core::Maths::Int3D otherPos);
+		virtual void Update(World::ServerWorld* worldIn, Blocks::Block* other, Core::Maths::IVec3 otherPos);
 
 		Block* SetHardness(float value);
 		Block* SetUnbreakable();

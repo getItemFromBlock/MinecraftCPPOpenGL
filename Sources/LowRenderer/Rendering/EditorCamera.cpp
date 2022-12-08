@@ -20,20 +20,47 @@ void LowRenderer::Rendering::EditorCamera::Update(const Core::App::Inputs& input
     {
         distance = 5.0f;
         // Update rotation.
-        rotation = rotation + Vec3D(-inputs.deltaMouse.x, inputs.deltaMouse.y, 0) * RotationSpeed;
-        rotation = Vec3D(Util::mod(rotation.x, 360), Util::cut(rotation.y, -90.0f, 90.0f), Util::mod(rotation.z, 360));
-        /*
-        // Update focus.
-        float dSpeed = deltaTime * MovementSpeed * (inputs.shift ? 5.0f : (inputs.control ? 0.2f : 1.0f));
-        Vec3D delta = Vec3D(dSpeed * inputs.right - dSpeed * inputs.left, dSpeed * inputs.up - dSpeed * inputs.down, dSpeed * inputs.backward - dSpeed * inputs.forward) / 20;
-        focus = focus + Vec3D(cosf(Util::toRadians(rotation.x)) * delta.x + sinf(Util::toRadians(rotation.x)) * delta.z, delta.y, -sinf(Util::toRadians(rotation.x)) * delta.x + cosf(Util::toRadians(rotation.x)) * delta.z);
-        // Update Position
-        */
+        rotation = rotation + Vec3(-inputs.deltaMouse.x, inputs.deltaMouse.y, 0) * RotationSpeed;
+        rotation = Vec3(Util::mod(rotation.x, 360), Util::cut(rotation.y, -90.0f, 90.0f), Util::mod(rotation.z, 360));
     }
 
     // Update distance.
-    Mat4D Rot = Core::Maths::Mat4D::CreateRotationMatrix(Vec3D(-rotation.y, rotation.x, rotation.z));
-    focus = position - (Rot * Core::Maths::Vec3D(0, 0, distance)).getVector();//Vec3D(sinf(Util::toRadians(rotation.x)) * cosf(Util::toRadians(rotation.y)), sinf(Util::toRadians(rotation.y)), cosf(Util::toRadians(rotation.x)) * cosf(Util::toRadians(rotation.y)))* (distance == 0.0f ? 0.001f : distance);
+    Mat4 Rot = Core::Maths::Mat4::CreateRotationMatrix(Vec3(-rotation.y, rotation.x, rotation.z));
+    focus = position - (Rot * Core::Maths::Vec3(0, 0, distance)).getVector();
+    aspect_ratio = inputs.ScreenSize.x * 1.0f / inputs.ScreenSize.y;
+    Resolution = inputs.ScreenSize;
+    deltaUp = (Rot * up).getVector();
+}
+
+void LowRenderer::Rendering::EditorCamera::Update(const Core::App::Inputs& inputs, const Vec3& posIn, CameraViewMode mode, const float deltaTime)
+{
+    if (inputs.mouseCaptured)
+    {
+        distance = 5.0f;
+        // Update rotation.
+        rotation = rotation + Vec3(-inputs.deltaMouse.x, inputs.deltaMouse.y, 0) * RotationSpeed;
+        rotation = Vec3(Util::mod(rotation.x, 360), Util::cut(rotation.y, -90.0f, 90.0f), Util::mod(rotation.z, 360));
+    }
+
+    // Update distance.
+    Mat4 Rot = Core::Maths::Mat4::CreateRotationMatrix(Vec3(-rotation.y, rotation.x, rotation.z));
+    switch (mode)
+    {
+    case CameraViewMode::DEFAULT:
+        position = posIn;
+        focus = position - (Rot * Core::Maths::Vec3(0, 0, distance)).getVector();
+        break;
+    case CameraViewMode::BACK:
+        focus = posIn;
+        position = focus + (Rot * Core::Maths::Vec3(0, 0, distance)).getVector();
+        break;
+    case CameraViewMode::FRONT:
+        focus = posIn;
+        position = focus - (Rot * Core::Maths::Vec3(0, 0, distance)).getVector();
+        break;
+    default:
+        break;
+    }
     aspect_ratio = inputs.ScreenSize.x * 1.0f / inputs.ScreenSize.y;
     Resolution = inputs.ScreenSize;
     deltaUp = (Rot * up).getVector();

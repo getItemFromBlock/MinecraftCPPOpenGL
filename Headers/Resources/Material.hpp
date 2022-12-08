@@ -12,10 +12,10 @@ namespace Resources
 	class Material : public IResource, public Core::DataStructure::INameable
 	{
 	public:
-		Core::Maths::Vec3D AmbientColor = Core::Maths::Vec3D(1);	// Ka parameter in OBJ
-		Core::Maths::Vec3D DiffuseColor = Core::Maths::Vec3D(1);	// Kd parameter
-		Core::Maths::Vec3D SpecularColor = Core::Maths::Vec3D(1); // Ks parameter
-		Core::Maths::Vec3D EmissiveColor = Core::Maths::Vec3D(0);	// Ke parameter
+		Core::Maths::Vec3 AmbientColor = Core::Maths::Vec3(1);	// Ka parameter in OBJ
+		Core::Maths::Vec3 DiffuseColor = Core::Maths::Vec3(1);	// Kd parameter
+		Core::Maths::Vec3 SpecularColor = Core::Maths::Vec3(1); // Ks parameter
+		Core::Maths::Vec3 EmissiveColor = Core::Maths::Vec3(0);	// Ke parameter
 		float Alpha = 1.0f;				// d parameter (or 1 - Tr)
 		float Smoothness = 64.0f;		// Ns parameter
 		float Shininess = 1.0f;

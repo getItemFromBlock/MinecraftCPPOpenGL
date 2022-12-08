@@ -21,7 +21,7 @@ void LowRenderer::DirectionalLight::DeleteLight()
 
 void LowRenderer::DirectionalLight::Update(std::vector<LowRenderer::Rendering::RenderCamera*>* cameras, Resources::ResourceManager* resources, Resources::TextureManager* textureManager, LowRenderer::Lightning::LightManager* lightManager, float deltaTime)
 {
-	GlobalDirection = (Core::Maths::Mat4D::CreateTransformMatrix(Core::Maths::Vec3D(), Rotation, Core::Maths::Vec3D(1)) * Core::Maths::Vec4D(0, 0, 1, 0)).getVector().unitVector();
+	GlobalDirection = (Core::Maths::Mat4::CreateTransformMatrix(Core::Maths::Vec3(), Rotation, Core::Maths::Vec3(1)) * Core::Maths::Vec4(0, 0, 1, 0)).getVector().unitVector();
 	lightManager->DLights.push_back(this);
 	Light::Update(cameras, resources, textureManager, lightManager, deltaTime);
 }
@@ -53,7 +53,7 @@ void LowRenderer::PointLight::DeleteLight()
 
 void LowRenderer::PointLight::Update(std::vector<LowRenderer::Rendering::RenderCamera*>* cameras, Resources::ResourceManager* resources, Resources::TextureManager* textureManager, LowRenderer::Lightning::LightManager* lightManager, float deltaTime)
 {
-	Position = (Core::Maths::Vec4D(0, 0, 0, 1)).getVector();
+	Position = (Core::Maths::Vec4(0, 0, 0, 1)).getVector();
 	lightManager->PLights.push_back(this);
 	Light::Update(cameras, resources, textureManager, lightManager, deltaTime);
 }
@@ -81,10 +81,10 @@ float* LowRenderer::PointLight::GetValues()
 
 void LowRenderer::SpotLight::Update(std::vector<LowRenderer::Rendering::RenderCamera*>* cameras, Resources::ResourceManager* resources, Resources::TextureManager* textureManager, Lightning::LightManager* lightManager, float deltaTime)
 {
-	Position = (Core::Maths::Vec4D(0, 0, 0, 1)).getVector();
-	Core::Maths::Mat4D tranform = Core::Maths::Mat4D::CreateTransformMatrix(Core::Maths::Vec3D(), Rotation, Core::Maths::Vec3D(1));
-	GlobalDirection = ((tranform * Core::Maths::Vec4D(0, 0, 1, 0))).getVector().unitVector();
-	GlobalUp = ((tranform * Core::Maths::Vec4D(0, 1, 0, 0))).getVector().unitVector();
+	Position = (Core::Maths::Vec4(0, 0, 0, 1)).getVector();
+	Core::Maths::Mat4 tranform = Core::Maths::Mat4::CreateTransformMatrix(Core::Maths::Vec3(), Rotation, Core::Maths::Vec3(1));
+	GlobalDirection = ((tranform * Core::Maths::Vec4(0, 0, 1, 0))).getVector().unitVector();
+	GlobalUp = ((tranform * Core::Maths::Vec4(0, 1, 0, 0))).getVector().unitVector();
 	lightManager->SLights.push_back(this);
 	if (ShadowType == ShadowUpdateType::Baked || ShadowType == ShadowUpdateType::Realtime)
 	{

@@ -15,7 +15,7 @@ namespace World
 
 	struct LightBlockData
 	{
-		Core::Maths::Int3D globalPos;
+		Core::Maths::IVec3 globalPos;
 		float distance = 0;
 		Blocks::Block* ptr = nullptr;
 	};
@@ -29,15 +29,16 @@ namespace World
 		~Chunk();
 		void Update(World* worldIn);
 		void SetDirty() { IsDirty = true; }
-		void SetBlock(World* worldIn, Core::Maths::Int3D pos, Blocks::Block* block, bool update = true);
-		void SetBlockNoUpdate(Core::Maths::Int3D pos, Blocks::Block* block);
-		Blocks::Block* GetBlock(Core::Maths::Int3D pos);
-		const Core::Maths::Int3D& getWorldPos() { return worldPos; }
-		void AddLightBlock(World* worldIn, Core::Maths::Int3D pos);
-		void RemoveLightBlock(Core::Maths::Int3D pos);
+		void SetBlock(World* worldIn, Core::Maths::IVec3 pos, Blocks::Block* block, bool update = true);
+		void SetBlockNoUpdate(Core::Maths::IVec3 pos, Blocks::Block* block);
+		Blocks::Block* GetBlock(Core::Maths::IVec3 pos);
+		const Core::Maths::IVec3& getWorldPos() { return worldPos; }
+		void AddLightBlock(World* worldIn, Core::Maths::IVec3 pos);
+		void RemoveLightBlock(Core::Maths::IVec3 pos);
+		void SetupLightForRender(Resources::ShaderProgram* shaderProgram);
 	private:
 		std::vector<Core::Util::Vertice> blockRenderData[4096];
-		Core::Maths::Int3D worldPos;
+		Core::Maths::IVec3 worldPos;
 		ChunkModel model = ChunkModel();
 		Blocks::Block* content[4096];
 		uint8_t heightMap[16*16];
@@ -45,10 +46,10 @@ namespace World
 		std::atomic<bool> isReady = false;
 		uint8_t lightCount = 0;
 		LightBlockData lightBlocks[PLIGHT_SIZE];
-		static uint16_t GetBlockPosCk(Core::Maths::Int3D blockPos);
+		static uint16_t GetBlockPosCk(Core::Maths::IVec3 blockPos);
 		void UpdateBlockRender(World* worldIn, uint16_t index);
 		void UpdateRender(World* worldIn);
 		void GenerateRender(World* worldIn);
-		void Render(Resources::ShaderProgram* shaderProgram, unsigned int& VAOCurrent, const Core::Maths::Mat4D& vp, bool IsShadowMap);
+		void Render(Resources::ShaderProgram* shaderProgram, unsigned int& VAOCurrent, const Core::Maths::Mat4& vp, bool IsShadowMap);
 	};
 }

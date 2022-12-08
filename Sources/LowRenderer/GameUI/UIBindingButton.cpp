@@ -20,7 +20,7 @@ void LowRenderer::GameUI::UIBindingButton::DeleteElement()
 	this->~UIBindingButton();
 }
 
-void LowRenderer::GameUI::UIBindingButton::RenderGameUI(unsigned int& VAOCurrent, Resources::ShaderProgram** shaderProgramCurrent, const Core::Maths::Mat4D& v, const Core::Maths::Vec2D ScreenRes, const Core::Maths::Vec2D MousePos, float ScrollValue, unsigned int Inputs)
+void LowRenderer::GameUI::UIBindingButton::RenderGameUI(unsigned int& VAOCurrent, Resources::ShaderProgram** shaderProgramCurrent, const Core::Maths::Mat4& v, const Core::Maths::Vec2 ScreenRes, const Core::Maths::Vec2 MousePos, float ScrollValue, unsigned int Inputs)
 {
 	if (!Plane) return;
 	if (Label == "Text") UpdateKeyText();

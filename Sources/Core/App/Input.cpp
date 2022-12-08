@@ -16,16 +16,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		LastKey = key;
 }
 
-Core::Maths::Int2D screenDim = Core::Maths::Int2D();
+Core::Maths::IVec2 screenDim = Core::Maths::IVec2();
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	// make sure the viewport matches the new window dimensions; note that width and
 	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0, width, height);
-	screenDim = Core::Maths::Int2D(width, height);
+	screenDim = Core::Maths::IVec2(width, height);
 }
 
-void Inputs::InitInputs(GLFWwindow* window, Core::Maths::Int2D defaultSize)
+void Inputs::InitInputs(GLFWwindow* window, Core::Maths::IVec2 defaultSize)
 {
 	glfwSetScrollCallback(window, scroll_callback);
 	glfwSetKeyCallback(window, key_callback);

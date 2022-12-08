@@ -124,19 +124,19 @@ void Resources::TextureManager::LoadAtlas(Resources::TextureAtlas& atlas)
             LOG("%s:%s", files[i].c_str(), exts[i].c_str());
         }
     }
-	Core::Maths::Int2D size = Core::Maths::Int2D(16, 16);
+	Core::Maths::IVec2 size = Core::Maths::IVec2(16, 16);
 	int index = 0;
 	for (size_t i = 0; i < textures.size(); i++)
 	{
 		if (i >= 4096) break;
 		TextureData& tmp = textures.at(i);
 		if (tmp.width % 16 != 0 || tmp.height % 16 != 0) LOG("Bruh %d : [%s; %s]", tmp.width, tmp.height, tmp.name.c_str());
-		atlas.PushTextureIndex(tmp.name.substr(19), Core::Maths::Int2D(16 * (index % 64), 16 * (index / 64)));
+		atlas.PushTextureIndex(tmp.name.substr(19), Core::Maths::IVec2(16 * (index % 64), 16 * (index / 64)));
 		for (int k = 0; k < tmp.width / 16; k++)
 			for (int n = (tmp.height / 16 )-1; n >= 0; n--)
 			{
-				Core::Maths::Int2D pos = Core::Maths::Int2D(16 * (index % 64), 16 * (index / 64));
-				atlas.FillRegion(pos, size, ((Core::Maths::UChar4D*)textures.at(i).data)+(n*(tmp.width/16)*256+k*16), tmp.width);
+				Core::Maths::IVec2 pos = Core::Maths::IVec2(16 * (index % 64), 16 * (index / 64));
+				atlas.FillRegion(pos, size, ((Core::Maths::Color4*)textures.at(i).data)+(n*(tmp.width/16)*256+k*16), tmp.width);
 				index++;
 			}
 	}

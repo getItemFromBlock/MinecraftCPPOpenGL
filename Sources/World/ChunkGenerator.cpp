@@ -2,10 +2,11 @@
 
 #include "Blocks/Blocks.hpp"
 #include "World/World.hpp"
+#include "Core/App/App.hpp"
 
 World::ChunkGenerator::ChunkGenerator()
 {
-	worldSeed = static_cast<unsigned int>(rand());
+	worldSeed = static_cast<unsigned int>(Core::App::App::GetRNG().nextInt());
 	noiseA = siv::BasicPerlinNoise<float>(worldSeed);
 }
 
@@ -28,14 +29,14 @@ void World::ChunkGenerator::ExitThread()
 
 void World::ChunkGenerator::GenerateChunk(Chunk* ck)
 {
-	Core::Maths::Int3D worldPos = ck->getWorldPos();
+	Core::Maths::IVec3 worldPos = ck->getWorldPos();
 	for (unsigned int j = 0; j < 16; j++)
 	{
 		for (unsigned int i = 0; i < 16; i++)
 		{
 			for (unsigned int k = 0; k < 16; k++)
 			{
-				Core::Maths::Int3D blockPos = Core::Maths::Int3D(i, j, k) + worldPos * 16;
+				Core::Maths::IVec3 blockPos = Core::Maths::IVec3(i, j, k) + worldPos * 16;
 				float height = wFunc(blockPos.x, blockPos.z);
 				if (blockPos.y == -64)
 				{

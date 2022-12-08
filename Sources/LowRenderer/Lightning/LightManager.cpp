@@ -12,7 +12,7 @@ LowRenderer::Lightning::LightManager::~LightManager()
 {
 }
 
-void LowRenderer::Lightning::LightManager::WriteLights(Resources::ShaderProgram** shaderProgramCurrent, Resources::ShaderProgram* shader, const Core::Maths::Vec3D& cameraPos, std::vector< Core::Maths::Mat4D>* lvp, bool first, float GlobalTime)
+void LowRenderer::Lightning::LightManager::WriteLights(Resources::ShaderProgram** shaderProgramCurrent, Resources::ShaderProgram* shader, const Core::Maths::Vec3& cameraPos, std::vector< Core::Maths::Mat4>* lvp, bool first, float GlobalTime)
 {
 	
 }
@@ -25,7 +25,7 @@ void LowRenderer::Lightning::LightManager::EmptyLights()
 	ShadowMapLights.clear();
 }
 
-void LowRenderer::Lightning::LightManager::UpdateShaders(Resources::ShaderProgram** shaderProgramCurrent, Resources::ShaderManager* manager, const Core::Maths::Vec3D& cameraPos, std::vector<Core::Maths::Mat4D>* lvp, float GlobalTime)
+void LowRenderer::Lightning::LightManager::UpdateShaders(Resources::ShaderProgram** shaderProgramCurrent, Resources::ShaderManager* manager, const Core::Maths::Vec3& cameraPos, std::vector<Core::Maths::Mat4>* lvp, float GlobalTime)
 {
 	std::vector<Resources::ShaderProgram*> shaders = manager->GetShaderPrograms();
 	for (unsigned int i = 0; i < shaders.size(); i++)

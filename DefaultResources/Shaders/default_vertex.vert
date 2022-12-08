@@ -20,7 +20,7 @@ uniform mat4 Dmvp;
 void main()
 {
 	gl_Position = mvp * vec4(aPos, 1.0);
-	ourNormal = vec3(m * vec4(aNormal, 0.0));
+	ourNormal = normalize(vec3(m * vec4(aNormal, 0.0)));
 	TexCoord = aTexCoord;
 	position = vec3(m * vec4(aPos, 1.0));
 	tangent = vec3(m * vec4(aTangent, 0.0));

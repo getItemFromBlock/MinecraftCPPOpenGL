@@ -11,12 +11,12 @@ namespace World
     private:
         Resources::Mesh mesh = Resources::Mesh();
     public:
-        Core::Maths::Mat4D modelMat = Core::Maths::Mat4D::Identity();
+        Core::Maths::Mat4 modelMat = Core::Maths::Mat4::Identity();
 
         ChunkModel();
         ~ChunkModel();
 
-        void Render(Resources::ShaderProgram* shaderProgram, unsigned int& VAOCurrent, const Core::Maths::Mat4D& vp);
+        void Render(Resources::ShaderProgram* shaderProgram, unsigned int& VAOCurrent, const Core::Maths::Mat4& vp);
 
         bool IsLoaded() { return mesh.IsLoaded(); }
 

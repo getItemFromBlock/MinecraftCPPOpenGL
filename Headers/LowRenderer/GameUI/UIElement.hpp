@@ -38,13 +38,13 @@ namespace LowRenderer
 
 				virtual void DeleteElement();
 				virtual void PreUpdate();
-				virtual void RenderGameUI(unsigned int& VAOCurrent, Resources::ShaderProgram** shaderProgramCurrent, const Core::Maths::Mat4D& v, const Core::Maths::Vec2D ScreenRes, const Core::Maths::Vec2D MousePos, float ScrollValue, unsigned int Inputs);
+				virtual void RenderGameUI(unsigned int& VAOCurrent, Resources::ShaderProgram** shaderProgramCurrent, const Core::Maths::Mat4& v, const Core::Maths::Vec2 ScreenRes, const Core::Maths::Vec2 MousePos, float ScrollValue, unsigned int Inputs);
 				virtual void OnClick() = 0;
 				bool CompareAnchor(AnchorType other);
 			protected:
-				Core::Maths::Vec3D ElementPos = Core::Maths::Vec3D(0);
-				Core::Maths::Vec2D ElementSize = Core::Maths::Vec2D(0.2f, 0.2f);
-				Core::Maths::Mat4D ElementMat = Core::Maths::Mat4D::Identity();
+				Core::Maths::Vec3 ElementPos = Core::Maths::Vec3(0);
+				Core::Maths::Vec2 ElementSize = Core::Maths::Vec2(0.2f, 0.2f);
+				Core::Maths::Mat4 ElementMat = Core::Maths::Mat4::Identity();
 				float Alpha = 1.0f;
 				float ElementRot = 0;
 				bool AdaptToScreen = false;

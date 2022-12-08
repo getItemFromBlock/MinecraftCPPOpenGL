@@ -26,17 +26,17 @@ inline void LowRenderer::GameUI::UIElement::PreUpdate()
 	}
 }
 
-void LowRenderer::GameUI::UIElement::RenderGameUI(unsigned int& VAOCurrent, Resources::ShaderProgram** shaderProgramCurrent, const Core::Maths::Mat4D& v, const Core::Maths::Vec2D ScreenRes, const Core::Maths::Vec2D MousePos, float ScrollValue, unsigned int MouseInputs)
+void LowRenderer::GameUI::UIElement::RenderGameUI(unsigned int& VAOCurrent, Resources::ShaderProgram** shaderProgramCurrent, const Core::Maths::Mat4& v, const Core::Maths::Vec2 ScreenRes, const Core::Maths::Vec2 MousePos, float ScrollValue, unsigned int MouseInputs)
 {
-	Core::Maths::Vec2D MinC;
+	Core::Maths::Vec2 MinC;
 	float Ratio = ScreenRes.x / ScreenRes.y;
-	Core::Maths::Vec2D Sz = ElementSize * Core::Maths::Vec2D(AdaptToScreen ? ScreenRes.x : ScreenRes.y, ScreenRes.y) * 0.5f;
+	Core::Maths::Vec2 Sz = ElementSize * Core::Maths::Vec2(AdaptToScreen ? ScreenRes.x : ScreenRes.y, ScreenRes.y) * 0.5f;
 	MinC.x = (ElementPos.x + (CompareAnchor(AnchorType::Left) ? 0 : (CompareAnchor(AnchorType::Right) ? 2 : 1))) * ScreenRes.x * 0.5f - Sz.x;
 	MinC.y = (ElementPos.y + (CompareAnchor(AnchorType::Up) ? 0 : (CompareAnchor(AnchorType::Down) ? 2 : 1))) * ScreenRes.y * 0.5f - Sz.y;
-	Core::Maths::Vec2D MaxC;
+	Core::Maths::Vec2 MaxC;
 	MaxC.x = (ElementPos.x + (CompareAnchor(AnchorType::Left) ? 0 : (CompareAnchor(AnchorType::Right) ? 2 : 1))) * ScreenRes.x * 0.5f + Sz.x;
 	MaxC.y = (ElementPos.y + (CompareAnchor(AnchorType::Up) ? 0 : (CompareAnchor(AnchorType::Down) ? 2 : 1))) * ScreenRes.y * 0.5f + Sz.y;
-	ElementMat = Core::Maths::Mat4D::CreateTransformMatrix(Core::Maths::Vec3D(((MinC.x + Sz.x) / ScreenRes.x * 2 - 1) * Ratio, (1 - (MinC.y + Sz.y) / ScreenRes.y) * 2 - 1, ElementPos.z * 2 - 1), Core::Maths::Vec3D(0, 0, ElementRot), Core::Maths::Vec3D(Sz.x / ScreenRes.y * 2.0f, Sz.y / ScreenRes.y * 2.0f, 1));
+	ElementMat = Core::Maths::Mat4::CreateTransformMatrix(Core::Maths::Vec3(((MinC.x + Sz.x) / ScreenRes.x * 2 - 1) * Ratio, (1 - (MinC.y + Sz.y) / ScreenRes.y) * 2 - 1, ElementPos.z * 2 - 1), Core::Maths::Vec3(0, 0, ElementRot), Core::Maths::Vec3(Sz.x / ScreenRes.y * 2.0f, Sz.y / ScreenRes.y * 2.0f, 1));
 	Hovered = MousePos.x >= MinC.x && MousePos.x <= MaxC.x && MousePos.y >= MinC.y && MousePos.y <= MaxC.y;
 	if (Clicked && !(MouseInputs & static_cast<unsigned int>(Core::App::MouseInput::ALL_DOWN))) Clicked = false;
 	if (!Clicked && Hovered && (MouseInputs & static_cast<unsigned int>(Core::App::MouseInput::ALL_PRESS)))

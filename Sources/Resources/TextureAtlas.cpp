@@ -9,12 +9,12 @@ TextureAtlas::TextureAtlas()
 {
 }
 
-TextureAtlas::TextureAtlas(Core::Maths::Int2D s, const std::string& n)
+TextureAtlas::TextureAtlas(Core::Maths::IVec2 s, const std::string& n)
 {
 	Assert(s.x > 0 && s.y > 0);
 	Name = n;
 	size = s;
-	textureData = new Core::Maths::UChar4D[(uint64_t)size.x * size.y];
+	textureData = new Core::Maths::Color4[(uint64_t)size.x * size.y];
 }
 
 TextureAtlas::~TextureAtlas()
@@ -49,25 +49,25 @@ void TextureAtlas::UnLoad()
 	loaded = false;
 }
 
-void Resources::TextureAtlas::PushTextureIndex(std::string name, Core::Maths::Int2D pos)
+void Resources::TextureAtlas::PushTextureIndex(std::string name, Core::Maths::IVec2 pos)
 {
-	Core::Maths::Vec2D rPos = Core::Maths::Vec2D(pos) / (float)size.x;
+	Core::Maths::Vec2 rPos = Core::Maths::Vec2(pos) / (float)size.x;
 	textureIndex.emplace(name, rPos);
 }
 
-Core::Maths::Vec2D Resources::TextureAtlas::GetTexture(std::string name)
+Core::Maths::Vec2 Resources::TextureAtlas::GetTexture(std::string name)
 {
 	auto result = textureIndex.find(name.append(".png"));
 	if (result == textureIndex.end()) return textureIndex.find("block/debug.png")->second;
 	return result->second;
 }
 
-Core::Maths::Vec2D Resources::TextureAtlas::GetTextureSize()
+Core::Maths::Vec2 Resources::TextureAtlas::GetTextureSize()
 {
-	return Core::Maths::Vec2D(16*1.0f/size.x, 16 * 1.0f / size.y);
+	return Core::Maths::Vec2(16*1.0f/size.x, 16 * 1.0f / size.y);
 }
 
-void Resources::TextureAtlas::FillRegion(Core::Maths::Int2D position, Core::Maths::Int2D fillSize, const Core::Maths::UChar4D* data, int dataWidth)
+void Resources::TextureAtlas::FillRegion(Core::Maths::IVec2 position, Core::Maths::IVec2 fillSize, const Core::Maths::Color4* data, int dataWidth)
 {
 	if (position.x < 0 || fillSize.x <= 0 || position.x + fillSize.x > size.x ||
 		position.y < 0 || fillSize.y <= 0 || position.y + fillSize.y > size.y ||
@@ -77,6 +77,6 @@ void Resources::TextureAtlas::FillRegion(Core::Maths::Int2D position, Core::Math
 	{
 		size_t deltaA = (i + position.y) * size.x + position.x;
 		size_t deltaB = i * dataWidth;
-		std::memcpy(textureData + deltaA, data + deltaB, sizeof(Core::Maths::UChar4D) * fillSize.x);
+		std::memcpy(textureData + deltaA, data + deltaB, sizeof(Core::Maths::Color4) * fillSize.x);
 	}
 }

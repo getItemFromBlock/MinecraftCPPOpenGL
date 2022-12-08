@@ -1,9 +1,9 @@
 #include "Blocks/TorchBlock.hpp"
 
-Blocks::TorchBlock::TorchBlock(const char* Name_ID, Core::Maths::Vec3D light) : LightBlock(Name_ID, light)
+Blocks::TorchBlock::TorchBlock(const char* Name_ID, Core::Maths::Vec3 light) : LightBlock(Name_ID, light)
 {
 	hitBox = Core::Util::HitBox();
-	hitBox.HitBoxData.push_back((Core::Util::Box(Core::Maths::Vec3D(0.5f, 0.3f, 0.5f), Core::Maths::Vec3D(0.25f, 0.6f, 0.25f))));
+	hitBox.HitBoxData.push_back((Core::Util::Box(Core::Maths::Vec3(0.5f, 0.3f, 0.5f), Core::Maths::Vec3(0.25f, 0.6f, 0.25f))));
 }
 
 Blocks::TorchBlock::~TorchBlock()

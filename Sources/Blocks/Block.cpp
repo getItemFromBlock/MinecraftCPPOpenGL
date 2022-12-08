@@ -2,7 +2,7 @@
 
 #include "Core/Debug/Assert.hpp"
 #include "Core/Util/JsonReader.hpp"
-#include "World/World.hpp"
+#include "World/ServerWorld.hpp"
 
 Blocks::Block::Block(const char* Name_ID)
 {
@@ -37,7 +37,7 @@ Core::Util::CollisionType Blocks::Block::GetCollisionType()
 	return Core::Util::CollisionType::DEFAULT;
 }
 
-void Blocks::Block::Update(World::World* worldIn, Blocks::Block* other, Core::Maths::Int3D otherPos)
+void Blocks::Block::Update(World::ServerWorld* worldIn, Blocks::Block* other, Core::Maths::IVec3 otherPos)
 {
 }
 

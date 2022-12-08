@@ -41,14 +41,14 @@ namespace LowRenderer
         Resources::Texture* currentTexture = nullptr;
         Resources::Texture* currentNormalMap = nullptr;
     public:
-        Core::Maths::Mat4D modelMat = Core::Maths::Mat4D::Identity();
+        Core::Maths::Mat4 modelMat = Core::Maths::Mat4::Identity();
         Resources::ShaderProgram* shaderProgram = nullptr;
 
         Model();
         Model(Resources::ShaderProgram* Shader);
         ~Model();
 
-        void Render(unsigned int& VAOCurrent, Resources::ShaderProgram** shaderProgramCurrent, const Core::Maths::Mat4D& vp, const std::vector<Core::Maths::Mat4D>* lvp);
+        void Render(unsigned int& VAOCurrent, Resources::ShaderProgram** shaderProgramCurrent, const Core::Maths::Mat4& vp, const std::vector<Core::Maths::Mat4>* lvp);
 
         void AddMesh(Resources::Mesh* modelIn, Resources::ResourceManager* manager, Resources::Material* modelMaterial);
 
@@ -60,7 +60,7 @@ namespace LowRenderer
 
         int GetNumberOfTriangles();
 
-        void SetColor(Core::Maths::Vec3D newColor);
+        void SetColor(Core::Maths::Vec3 newColor);
 
         void SetTexture(unsigned int textureID);
 

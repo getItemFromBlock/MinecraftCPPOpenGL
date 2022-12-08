@@ -58,7 +58,7 @@ namespace Core::App
 		windowIcon = Resources::Texture::ReadIcon("DefaultResources/Icon/Icon_48.png");
 		if (windowIcon) glfwSetWindowIcon(window,1,windowIcon);
 		//glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
-		inputs.InitInputs(window, Core::Maths::Int2D(data.width, data.height));
+		inputs.InitInputs(window, Core::Maths::IVec2(data.width, data.height));
 		return InitOpenGL(data);
 	}
 
@@ -101,6 +101,11 @@ namespace Core::App
 		InputBindings[static_cast<unsigned int>(InputType::Right)] = ImGuiKey_D;
 		InputBindings[static_cast<unsigned int>(InputType::Jump)] = ImGuiKey_Space;
 		InputBindings[static_cast<unsigned int>(InputType::Crouch)] = ImGuiKey_LeftCtrl;
+		InputBindings[static_cast<unsigned int>(InputType::Run)] = ImGuiKey_LeftShift;
+		InputBindings[static_cast<unsigned int>(InputType::Drop)] = ImGuiKey_Q;
+		InputBindings[static_cast<unsigned int>(InputType::Swap)] = ImGuiKey_F;
+		InputBindings[static_cast<unsigned int>(InputType::Inventory)] = ImGuiKey_E;
+		InputBindings[static_cast<unsigned int>(InputType::View)] = ImGuiKey_F5;
 		res = Resources::ResourceManager();
 		Resources::Texture::SetFilterType(GL_NEAREST);
 		res.SetPathAutoAppend(true);
@@ -109,7 +114,7 @@ namespace Core::App
 		size_t index = textures.CreateTexture(&res, "DefaultResources/Textures/ScreenBuffer.png");
 		ScreenBuffer = textures.GetTextures()[index];
 		textures.CreateTexture(&res, "DefaultResources/Textures/graph.png");
-		frameGraph = Core::Debug::FrameGraph(res.Get<Resources::Texture>("DefaultResources/Textures/graph.png"), Core::Maths::Int2D(240, 160));
+		frameGraph = Core::Debug::FrameGraph(res.Get<Resources::Texture>("DefaultResources/Textures/graph.png"), Core::Maths::IVec2(240, 160));
 		textures.CreateTexture(&res, "DefaultResources/Textures/normal.png");
 
 		textures.CreateFont(&res, "DefaultResources/Font/default_font.png", GL_NEAREST);
@@ -165,13 +170,13 @@ namespace Core::App
 	{
 		Resources::ShaderProgram* MainShader = shaders.GetShaderProgram("default shader");
 		Resources::ShaderProgram* LitShader = shaders.GetShaderProgram("lit shader");
-		Resources::TextureAtlas atlas = Resources::TextureAtlas(Core::Maths::Int2D(1024, 1024));
+		Resources::TextureAtlas atlas = Resources::TextureAtlas(Core::Maths::IVec2(1024, 1024));
 		textures.LoadAtlas(atlas);
 		Blocks::BlockRegister::RegisterBlocks(&atlas);
 		//Resources::Texture::SaveImage("atlas", (unsigned char*)atlas.GetData(), 1024, 1024);
 		atlas.Load();
-		World::World world = World::World(glfwGetTime(), &meshes, MainShader, LitShader, atlas.GetID());
-		seed = world.GetSeed();
+		world = new World::World(glfwGetTime(), &meshes, MainShader, LitShader, atlas.GetID());
+		seed = world->GetSeed();
 		LowRenderer::Model debug;
 		debug.CreateFrom(meshes.GetModels("DebugCube").at(0)->model);
 		debug.shaderProgram = LitShader;
@@ -179,6 +184,7 @@ namespace Core::App
 		glUniform1i(MainShader->GetLocation(Resources::ShaderData::Texture), atlas.GetID());
 		glUniform3f(MainShader->GetLocation(Resources::ShaderData::MatAmbient), 1.0f, 1.0f, 1.0f);
 		shaderProgram = MainShader;
+		shadowMapID = world->shadowMap.GetTextureID();
 		while (!glfwWindowShouldClose(window))
 		{
 			ImGui_ImplOpenGL3_NewFrame();
@@ -211,43 +217,27 @@ namespace Core::App
 				deltaTime = (float)(MAX_LAG_DELTA);
 			}
 
+			world->UpdateWorld(glfwGetTime(), deltaTime);
 
 			glClearColor(0.0f, 0.125f, 0.443f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 			glClear(GL_DEPTH_BUFFER_BIT);
-			shadowMapID = world.shadowMap.GetTextureID();
-			world.player.Update(deltaTime);
-			world.UpdateWorld(glfwGetTime());
-			MainCamera.position = world.player.Position + Core::Maths::Vec3D(0.0f, world.player.EyeHeight, 0.0f);
-			MainCamera.Update(inputs, deltaTime);
-			world.player.ViewRotation = Core::Maths::Vec3D(MainCamera.rotation.y, MainCamera.rotation.x + 180, MainCamera.rotation.z);
-			Core::Maths::Vec3D lookAt = (Core::Maths::Mat4D::CreateRotationMatrix(world.player.ViewRotation) * Core::Maths::Vec3D(0, 0, 5)).getVector();
-			lookAt = lookAt + world.player.Position + Core::Maths::Vec3D(0.0f, world.player.EyeHeight, 0.0f);
-			Core::Debug::OverlayGizmo::PushElement(Core::Util::Box(lookAt + Core::Maths::Vec3D(0.1f,0.0f,0.0f), Core::Maths::Vec3D(0.2f,0.01f,0.01f)), Core::Maths::Vec3D(1,0,0));
-			Core::Debug::OverlayGizmo::PushElement(Core::Util::Box(lookAt + Core::Maths::Vec3D(0.0f,0.1f,0.0f), Core::Maths::Vec3D(0.01f,0.2f,0.01f)), Core::Maths::Vec3D(0,1,0));
-			Core::Debug::OverlayGizmo::PushElement(Core::Util::Box(lookAt + Core::Maths::Vec3D(0.0f,0.0f,0.1f), Core::Maths::Vec3D(0.01f,0.01f,0.2f)), Core::Maths::Vec3D(0,0,1));
-			if (inputs.scroll > 0.1f) selectedBlock = Blocks::BlockRegister::getNext(selectedBlock);
-			else if (inputs.scroll < -0.1f) selectedBlock = Blocks::BlockRegister::getPrevious(selectedBlock);
-			Physics::RayCastResult result = Physics::PhysicsHandler::RayCastBlock(&world, world.player.Position + Core::Maths::Vec3D(0.0f, world.player.EyeHeight, 0.0f), lookAt);
-			if (result.hit && inputs.mouseCaptured)
+
+			Core::Maths::Mat4 vp;
+			if (!ortho)
 			{
-				if (inputs.leftMouse & INPUT_PRESS) world.SetBlockAt(result.position, Blocks::BlockRegister::GetBlock(BLOCK::AIR));
-				else if (inputs.rightMouse & INPUT_PRESS)
-				{
-					Blocks::Block* block = world.GetBlockAt(result.position + result.normal);
-					if (block && block->GetCollisionType() == Core::Util::CollisionType::NONE)
-					{
-						world.SetBlockAt(result.position + result.normal, Blocks::BlockRegister::GetBlock(selectedBlock));
-					}
-				}
+				vp = MainCamera.GetProjectionMatrix() * MainCamera.GetViewMatrix();
 			}
-			Core::Maths::Mat4D vp = MainCamera.GetProjectionMatrix() * MainCamera.GetViewMatrix();
-			world.RenderWorld(VAO, &shaderProgram, vp);
+			else
+			{
+				vp = MainCamera.GetOrthoMatrix() * MainCamera.GetViewMatrix();
+			}
+			world->RenderWorld(VAO, &shaderProgram, vp);
 			bool wf = false;
 			for (size_t i = 0; i < Core::Debug::Gizmo::GetSize(); i++)
 			{
 				const Core::Debug::ColoredBox& element = Core::Debug::Gizmo::GetItem(i);
-				debug.modelMat = Core::Maths::Mat4D::CreateTransformMatrix(element.box.center, Core::Maths::Vec3D(), element.box.size);
+				debug.modelMat = Core::Maths::Mat4::CreateTransformMatrix(element.box.center, Core::Maths::Vec3(), element.box.size);
 				debug.SetColor(element.color);
 				if (element.wireframe != wf) SwitchWireFrame(wf);
 				debug.Render(VAO, &shaderProgram, vp, nullptr);
@@ -256,7 +246,7 @@ namespace Core::App
 			for (size_t i = 0; i < Core::Debug::OverlayGizmo::GetSize(); i++)
 			{
 				const Core::Debug::ColoredBox& element = Core::Debug::OverlayGizmo::GetItem(i);
-				debug.modelMat = Core::Maths::Mat4D::CreateTransformMatrix(element.box.center, Core::Maths::Vec3D(), element.box.size);
+				debug.modelMat = Core::Maths::Mat4::CreateTransformMatrix(element.box.center, Core::Maths::Vec3(), element.box.size);
 				debug.SetColor(element.color);
 				if (element.wireframe != wf) SwitchWireFrame(wf);
 				debug.Render(VAO, &shaderProgram, vp, nullptr);
@@ -273,7 +263,7 @@ namespace Core::App
 
 			glfwSwapBuffers(window);
 		}
-		world.Exit();
+		world->Exit();
 		atlas.UnLoad();
 		Blocks::BlockRegister::FreeBlocks();
 	}
@@ -308,11 +298,11 @@ namespace Core::App
 		glfwTerminate();
 		delete[] windowIcon->pixels;
 		delete windowIcon;
+		delete world;
 	}
 
 	App::App()
 	{
-		srand(static_cast<unsigned int>(time(NULL)));
 		window = nullptr;
 		windowIcon = nullptr;
 		VAO = 0xffffffff;
@@ -345,8 +335,8 @@ namespace Core::App
 			SelectedComponentAlt = SelectedComponent;
 			SelectedComponent = 0;
 		}
-		static Core::Maths::Int2D savedSize;
-		static Core::Maths::Int2D savedPos;
+		static Core::Maths::IVec2 savedSize;
+		static Core::Maths::IVec2 savedPos;
 		/*
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		{
@@ -473,7 +463,7 @@ namespace Core::App
 			}
 			if (ImGui::CollapsingHeader("Game", ImGuiTreeNodeFlags_DefaultOpen))
 			{
-				ImGui::Text("Current Block : %s", Blocks::BlockRegister::GetBlock(selectedBlock)->GetName());
+				ImGui::Text("Current Block : %s", Blocks::BlockRegister::GetBlock(world->player->GetSelectedGlock())->GetName());
 				ImGui::Text("Seed: %lu", seed);
 			}
 			//Draw FPS

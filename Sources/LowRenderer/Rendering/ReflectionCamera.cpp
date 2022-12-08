@@ -6,9 +6,9 @@
 
 LowRenderer::Rendering::ReflectionCamera::ReflectionCamera()
 {
-	PlaneNormal = Core::Maths::Vec3D(0, 0, 1);
-	PlaneRight = Core::Maths::Vec3D(1, 0, 0);
-	PlaneUp = Core::Maths::Vec3D(0, 1, 0);
+	PlaneNormal = Core::Maths::Vec3(0, 0, 1);
+	PlaneRight = Core::Maths::Vec3(1, 0, 0);
+	PlaneUp = Core::Maths::Vec3(0, 1, 0);
 }
 
 LowRenderer::Rendering::ReflectionCamera::~ReflectionCamera()
@@ -43,9 +43,9 @@ void LowRenderer::Rendering::ReflectionCamera::Update(std::vector<RenderCamera*>
 			buffer->Init(Resolution.x, Resolution.y, Filter, Wrap);
 		}
 	}
-	PlaneNormal = Core::Maths::Vec4D(0, 0, 1, 0).getVector().unitVector();
-	PlaneRight = Core::Maths::Vec4D(1, 0, 0, 0).getVector().unitVector();
-	PlaneUp = Core::Maths::Vec4D(0, 1, 0, 0).getVector().unitVector();
+	PlaneNormal = Core::Maths::Vec4(0, 0, 1, 0).getVector().unitVector();
+	PlaneRight = Core::Maths::Vec4(1, 0, 0, 0).getVector().unitVector();
+	PlaneUp = Core::Maths::Vec4(0, 1, 0, 0).getVector().unitVector();
 	const LowRenderer::Rendering::EditorCamera* mCam = Core::App::App::GetMainCamera();
 	if (!(Resolution == mCam->GetResolution()))
 	{
@@ -59,17 +59,17 @@ void LowRenderer::Rendering::ReflectionCamera::Update(std::vector<RenderCamera*>
 	nearPlane = (mCam->position - container->GetGlobalMatrix()->GetPositionFromTranslation()).getLength();
 	float dtX = (mCam->position - container->GetGlobalMatrix()->GetPositionFromTranslation()).dotProduct(PlaneRight);
 	float dtY = (mCam->position - container->GetGlobalMatrix()->GetPositionFromTranslation()).dotProduct(PlaneUp);
-	Core::Maths::Vec3D refPos = PlaneRight * dtX + PlaneUp * dtY + container->GetGlobalMatrix()->GetPositionFromTranslation();
+	Core::Maths::Vec3 refPos = PlaneRight * dtX + PlaneUp * dtY + container->GetGlobalMatrix()->GetPositionFromTranslation();
 	position = mCam->position + (refPos - mCam->position) * 2;
-	Core::Maths::Vec3D dir = (mCam->focus - mCam->position).unitVector();
+	Core::Maths::Vec3 dir = (mCam->focus - mCam->position).unitVector();
 	dtX = dir.dotProduct(PlaneRight);
 	dtY = dir.dotProduct(PlaneUp);
-	Core::Maths::Vec3D refDir = PlaneRight * dtX + PlaneUp * dtY;
+	Core::Maths::Vec3 refDir = PlaneRight * dtX + PlaneUp * dtY;
 	focus = dir + (refDir - dir) * 2 + position;
-	Core::Maths::Vec3D wUp = mCam->up;
+	Core::Maths::Vec3 wUp = mCam->up;
 	dtX = wUp.dotProduct(PlaneRight);
 	dtY = wUp.dotProduct(PlaneUp);
-	Core::Maths::Vec3D refUp = PlaneRight * dtX + PlaneUp * dtY;
+	Core::Maths::Vec3 refUp = PlaneRight * dtX + PlaneUp * dtY;
 	deltaUp = wUp + (refUp - wUp) * 2;
 	cameras->push_back(this);
 	*/

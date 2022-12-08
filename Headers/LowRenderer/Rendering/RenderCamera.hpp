@@ -31,9 +31,9 @@ namespace LowRenderer
 			virtual void DeleteCamera();
 			void RefreshResolution() { Resolution = tmpResolution; }
 
-			Core::Maths::Int2D tmpResolution = Core::Maths::Int2D(256, 256);
+			Core::Maths::IVec2 tmpResolution = Core::Maths::IVec2(256, 256);
 			bool ClearBuffer = true;
-			Core::Maths::Vec3D ClearColor = Core::Maths::Vec3D();
+			Core::Maths::Vec3 ClearColor = Core::Maths::Vec3();
 		protected:
 			char UUID[17] = "";
 			LowRenderer::Rendering::FrameBuffer* buffer = nullptr;

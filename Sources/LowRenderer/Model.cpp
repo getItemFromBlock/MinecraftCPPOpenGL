@@ -21,12 +21,12 @@ LowRenderer::Model::Model(Resources::ShaderProgram* Shader) : shaderProgram(Shad
 
 LowRenderer::Model::~Model() {}
 
-void LowRenderer::Model::Render(unsigned int& VAOCurrent, Resources::ShaderProgram** shaderProgramCurrent, const Core::Maths::Mat4D& vp, const std::vector<Core::Maths::Mat4D>* lvp)
+void LowRenderer::Model::Render(unsigned int& VAOCurrent, Resources::ShaderProgram** shaderProgramCurrent, const Core::Maths::Mat4& vp, const std::vector<Core::Maths::Mat4>* lvp)
 {
 	if (!shaderProgram || models.size() == 0 || materials.size() == 0) return;
 
 	// Set matrix of model.
-	Core::Maths::Mat4D mvp = vp * modelMat;
+	Core::Maths::Mat4 mvp = vp * modelMat;
 	if (*shaderProgramCurrent != shaderProgram)
 	{
 		glUseProgram(shaderProgram->GetProgramID());
@@ -78,7 +78,7 @@ int LowRenderer::Model::GetNumberOfTriangles()
 	return x;
 }
 
-void LowRenderer::Model::SetColor(Core::Maths::Vec3D newColor)
+void LowRenderer::Model::SetColor(Core::Maths::Vec3 newColor)
 {
 	for (size_t i = 0; i < materials.size(); i++) materials[i].AmbientColor = newColor;
 }
@@ -123,7 +123,7 @@ void LowRenderer::Model::DeleteModel()
 
 void LowRenderer::Model::Update(std::vector<LowRenderer::Rendering::RenderCamera*>* cameras, Resources::ResourceManager* resources, Resources::TextureManager* textureManager, LowRenderer::Lightning::LightManager* lightManager, float deltaTime)
 {
-	modelMat = Core::Maths::Mat4D::Identity();
+	modelMat = Core::Maths::Mat4::Identity();
 	for (size_t i = 0; i < materials.size(); i++)
 	{
 		materials[i].Update(resources);

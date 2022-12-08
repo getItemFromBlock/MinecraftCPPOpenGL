@@ -16,10 +16,12 @@ namespace Core::Util
 	class Box
 	{
 	public:
-		Core::Maths::Vec3D center;
-		Core::Maths::Vec3D size;
+		Core::Maths::Vec3 center;
+		Core::Maths::Vec3 size;
 		Box() {}
-		Box(Core::Maths::Vec3D boxCenter, Core::Maths::Vec3D boxSize) : center(boxCenter), size(boxSize) {}
+		Box(Core::Maths::Vec3 boxCenter, Core::Maths::Vec3 boxSize) : center(boxCenter), size(boxSize) {}
+
+		bool IsInside(Core::Maths::Vec3 position) const;
 	};
 
 	class HitBox

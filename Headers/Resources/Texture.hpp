@@ -31,7 +31,7 @@ namespace Resources
 		void SetTextureID(unsigned int id) { textureID = id; }
 		int GetTextureWidth() { return sizeX; }
 		int GetTextureHeight() { return sizeY; }
-		Core::Maths::UChar4D ReadPixel(Core::Maths::Int2D pos);
+		Core::Maths::Color4 ReadPixel(Core::Maths::IVec2 pos);
 
 		static void SetFilterType(unsigned int in);
 		static void SetWrapType(unsigned int in);

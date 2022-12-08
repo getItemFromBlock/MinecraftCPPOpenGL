@@ -28,7 +28,7 @@ void World::Chunk::Update(World* worldIn)
 	}
 }
 
-void World::Chunk::SetBlock(World* worldIn, Core::Maths::Int3D pos, Blocks::Block* block, bool update)
+void World::Chunk::SetBlock(World* worldIn, Core::Maths::IVec3 pos, Blocks::Block* block, bool update)
 {
 	uint16_t bInd = GetBlockPosCk(pos);
 	content[bInd] = block;
@@ -38,22 +38,26 @@ void World::Chunk::SetBlock(World* worldIn, Core::Maths::Int3D pos, Blocks::Bloc
 	if (update)
 	{
 		for (int i = -1; i <= 1; i++)
+		{
 			for (int j = -1; j <= 1; j++)
+			{
 				for (int k = -1; k <= 1; k++)
 				{
-					Core::Maths::Int3D otherPos = Core::Maths::Int3D(i, j, k) + pos;
+					Core::Maths::IVec3 otherPos = Core::Maths::IVec3(i, j, k) + pos;
 					char mDist = (i != 0) + (j != 0) + (k != 0);
 					if (mDist <= 1)
 					{
 						Blocks::Block* bk = worldIn->GetBlockAt(otherPos);
-						if (bk) bk->Update(worldIn, bk, otherPos);
+						//if (bk) bk->Update(worldIn, bk, otherPos);
 					}
 					worldIn->UpdateBlockRender(otherPos);
 				}
+			}
+		}
 	}
 }
 
-void World::Chunk::SetBlockNoUpdate(Core::Maths::Int3D pos, Blocks::Block* block)
+void World::Chunk::SetBlockNoUpdate(Core::Maths::IVec3 pos, Blocks::Block* block)
 {
 	uint16_t bInd = GetBlockPosCk(pos);
 	content[bInd] = block;
@@ -62,21 +66,21 @@ void World::Chunk::SetBlockNoUpdate(Core::Maths::Int3D pos, Blocks::Block* block
 	if (height > heightMap[index]) heightMap[index] = height;
 }
 
-uint16_t World::Chunk::GetBlockPosCk(Core::Maths::Int3D blockPos)
+uint16_t World::Chunk::GetBlockPosCk(Core::Maths::IVec3 blockPos)
 {
 	return Core::Maths::Util::imod(blockPos.x, 16) |
 		Core::Maths::Util::imod(blockPos.z, 16) << 4 |
 		Core::Maths::Util::imod(blockPos.y, 16) << 8;
 }
 
-Blocks::Block* World::Chunk::GetBlock(Core::Maths::Int3D pos)
+Blocks::Block* World::Chunk::GetBlock(Core::Maths::IVec3 pos)
 {
 	return content[GetBlockPosCk(pos)];
 }
 
-void World::Chunk::AddLightBlock(World* worldIn, Core::Maths::Int3D pos)
+void World::Chunk::AddLightBlock(World* worldIn, Core::Maths::IVec3 pos)
 {
-	LightBlockData data = LightBlockData{pos, Core::Maths::Vec3D(pos - worldPos*16).getLength(), worldIn->GetBlockAt(pos)};
+	LightBlockData data = LightBlockData{pos, Core::Maths::Vec3(pos - worldPos*16).getLength(), worldIn->GetBlockAt(pos)};
 	for (uint8_t i = 0; i < PLIGHT_SIZE; i++)
 	{
 		if (i >= lightCount)
@@ -98,7 +102,7 @@ void World::Chunk::AddLightBlock(World* worldIn, Core::Maths::Int3D pos)
 	}
 }
 
-void World::Chunk::RemoveLightBlock(Core::Maths::Int3D pos)
+void World::Chunk::RemoveLightBlock(Core::Maths::IVec3 pos)
 {
 	for (uint8_t i = 0; i < lightCount; i++)
 	{
@@ -114,6 +118,18 @@ void World::Chunk::RemoveLightBlock(Core::Maths::Int3D pos)
 	}
 }
 
+void World::Chunk::SetupLightForRender(Resources::ShaderProgram* shaderProgram)
+{
+	Core::Maths::Vec3 lightData[2 * PLIGHT_SIZE];
+	for (uint8_t i = 0; i < lightCount; i++)
+	{
+		lightData[i * 2] = Core::Maths::Vec3(0.5f) + lightBlocks[i].globalPos;
+		lightData[i * 2 + 1] = lightBlocks[i].ptr->GetLightValue();
+	}
+	glUniform1fv(shaderProgram->GetLocation(Resources::ShaderData::LPoint), 6 * PLIGHT_SIZE, &lightData[0].x);
+	glUniform1ui(shaderProgram->GetLocation(Resources::ShaderData::LPointCount), static_cast<uint32_t>(lightCount));
+}
+
 void World::Chunk::UpdateBlockRender(World* worldIn, uint16_t index)
 {
 	Blocks::Block* current = content[index];
@@ -122,7 +138,7 @@ void World::Chunk::UpdateBlockRender(World* worldIn, uint16_t index)
 	{
 		return;
 	}
-	Core::Maths::Int3D blockPos = Core::Maths::Int3D(index & 0xf, (index & 0xf00) >> 8, (index & 0xf0) >> 4) + worldPos * 16;
+	Core::Maths::IVec3 blockPos = Core::Maths::IVec3(index & 0xf, (index & 0xf00) >> 8, (index & 0xf0) >> 4) + worldPos * 16;
 	current->GetFaceShape(Core::Util::Side::NONE).AddToChunk(blockPos, &blockRenderData[index]);
 	Core::Util::Side side = Core::Util::Side::RIGHT;
 	do
@@ -176,19 +192,12 @@ void World::Chunk::GenerateRender(World* worldIn)
 	isReady.store(true);
 }
 
-void World::Chunk::Render(Resources::ShaderProgram* shaderProgram, unsigned int& VAOCurrent, const Core::Maths::Mat4D& vp, bool IsShadowMap)
+void World::Chunk::Render(Resources::ShaderProgram* shaderProgram, unsigned int& VAOCurrent, const Core::Maths::Mat4& vp, bool IsShadowMap)
 {
 	if (!model.IsLoaded()) return;
 	if (!IsShadowMap)
 	{
-		Core::Maths::Vec3D lightData[2 * PLIGHT_SIZE];
-		for (uint8_t i = 0; i < lightCount; i++)
-		{
-			lightData[i*2] = Core::Maths::Vec3D(0.5f) + lightBlocks[i].globalPos;
-			lightData[i*2 + 1] = lightBlocks[i].ptr->GetLightValue();
-		}
-		glUniform1fv(shaderProgram->GetLocation(Resources::ShaderData::LPoint), 6*PLIGHT_SIZE, &lightData[0].x);
-		glUniform1ui(shaderProgram->GetLocation(Resources::ShaderData::LPointCount), static_cast<uint32_t>(lightCount));
+		SetupLightForRender(shaderProgram);
 	}
 	model.Render(shaderProgram, VAOCurrent, vp);
 }

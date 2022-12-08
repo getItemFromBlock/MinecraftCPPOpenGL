@@ -6,28 +6,74 @@
 
 namespace Core::Maths
 {
-    // -----------------------   Vec3D    -----------------------
+    // -----------------------   IVec2    -----------------------
 
-    void Vec3D::print() const
+    void IVec2::print() const
+    {
+        printf("(%d, %d)\n", x, y);
+    }
+
+    const std::string IVec2::toString() const
+    {
+        return "( " + std::to_string(x) + ", " + std::to_string(y) + ")";
+    }
+
+    // -----------------------   Vec2    -----------------------
+
+    void Vec2::print() const
+    {
+        printf("(%.2f, %.2f)\n", x, y);
+    }
+
+    const std::string Vec2::toString() const
+    {
+        return "( " + std::to_string(x) + ", " + std::to_string(y) + ")";
+    }
+
+    // -----------------------   IVec3    -----------------------
+
+    void IVec3::print() const
+    {
+        printf("(%d, %d, %d)\n", x, y, z);
+    }
+
+    const std::string IVec3::toString() const
+    {
+        return "( " + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
+    }
+
+    // -----------------------   Vec3    -----------------------
+
+    void Vec3::print() const
     {
         printf("(%.2f, %.2f, %.2f)\n", x, y, z);
     }
 
-    // -----------------------   Vec4D    -----------------------
+    const std::string Vec3::toString() const
+    {
+        return "( " + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
+    }
 
-    void Vec4D::print() const
+    // -----------------------   Vec4    -----------------------
+
+    void Vec4::print() const
     {
         printf("(%.2f, %.2f, %.2f, %.2f)\n", x, y, z, w);
     }
 
-    // -----------------------   Mat4D    -----------------------
+    const std::string Vec4::toString() const
+    {
+        return "( " + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + ")";
+    }
 
-    Mat4D::Mat4D(float diagonal)
+    // -----------------------   Mat4    -----------------------
+
+    Mat4::Mat4(float diagonal)
     {
         for (size_t i = 0; i < 4; i++) content[i*5] = diagonal;
     }
 
-    Mat4D::Mat4D(const Mat4D& in)
+    Mat4::Mat4(const Mat4& in)
     {
         for (size_t j = 0; j < 16; j++)
         {
@@ -35,7 +81,16 @@ namespace Core::Maths
         }
     }
 
-    Mat4D::Mat4D(const float* data)
+    Mat4::Mat4(const Mat3& in)
+    {
+        for (size_t j = 0; j < 9; j++)
+        {
+            content[j + (j/3)] = in.content[j];
+        }
+        content[15] = 1.0f;
+    }
+
+    Mat4::Mat4(const float* data)
     {
         for (size_t j = 0; j < 4; j++)
         {
@@ -46,9 +101,9 @@ namespace Core::Maths
         }
     }
 
-    Mat4D Mat4D::operator*(const Mat4D& in) const
+    Mat4 Mat4::operator*(const Mat4& in) const
     {
-        Mat4D out;
+        Mat4 out;
         for (size_t j = 0; j < 4; j++)
         {
             for (size_t i = 0; i < 4; i++)
@@ -63,9 +118,9 @@ namespace Core::Maths
         return out;
     }
 
-    Vec4D Mat4D::operator*(const Vec4D& in) const
+    Vec4 Mat4::operator*(const Vec4& in) const
     {
-        Vec4D out;
+        Vec4 out;
         for (size_t i = 0; i < 4; i++)
         {
             float res = 0;
@@ -75,9 +130,9 @@ namespace Core::Maths
         return out;
     }
 
-    Mat4D Mat4D::CreateXRotationMatrix(float angle)
+    Mat4 Mat4::CreateXRotationMatrix(float angle)
     {
-        Mat4D out = Mat4D(1);
+        Mat4 out = Mat4(1);
         float radA = Util::toRadians(angle);
         float cosA = cosf(radA);
         float sinA = sinf(radA);
@@ -88,9 +143,9 @@ namespace Core::Maths
         return out;
     }
 
-    Mat4D Mat4D::CreateYRotationMatrix(float angle)
+    Mat4 Mat4::CreateYRotationMatrix(float angle)
     {
-        Mat4D out = Mat4D(1);
+        Mat4 out = Mat4(1);
         float radA = Util::toRadians(angle);
         float cosA = cosf(radA);
         float sinA = sinf(radA);
@@ -101,9 +156,9 @@ namespace Core::Maths
         return out;
     }
 
-    Mat4D Mat4D::CreateZRotationMatrix(float angle)
+    Mat4 Mat4::CreateZRotationMatrix(float angle)
     {
-        Mat4D out = Mat4D(1);
+        Mat4 out = Mat4(1);
         float radA = Util::toRadians(angle);
         float cosA = cosf(radA);
         float sinA = sinf(radA);
@@ -114,37 +169,42 @@ namespace Core::Maths
         return out;
     }
 
-    Mat4D Mat4D::CreateScaleMatrix(const Vec3D& scale)
+    Mat4 Mat4::CreateScaleMatrix(const Vec3& scale)
     {
-        Mat4D out;
+        Mat4 out;
         for (int i = 0; i < 3; i++) out.at(i, i) = scale[i];
         out.content[15] = 1;
         return out;
     }
 
-    Mat4D Mat4D::CreateTranslationMatrix(const Vec3D& translation)
+    Mat4 Mat4::CreateTranslationMatrix(const Vec3& translation)
     {
-        Mat4D out = Mat4D(1);
+        Mat4 out = Mat4(1);
         for (int i = 0; i < 3; i++) out.at(3, i) = translation[i];
         return out;
     }
 
-    Mat4D Mat4D::CreateTransformMatrix(const Vec3D& position, const Vec3D& rotation, const Vec3D& scale)
+    Mat4 Mat4::CreateTransformMatrix(const Vec3& position, const Vec3& rotation, const Vec3& scale)
     {
         return CreateTranslationMatrix(position) * CreateRotationMatrix(rotation) * CreateScaleMatrix(scale);
     }
 
-    Mat4D Core::Maths::Mat4D::CreateRotationMatrix(Vec3D angles)
+    Mat4 Mat4::CreateTransformMatrix(const Vec3& position, const Vec3& rotation)
+    {
+        return CreateTranslationMatrix(position) * CreateRotationMatrix(rotation);
+    }
+
+    Mat4 Core::Maths::Mat4::CreateRotationMatrix(Vec3 angles)
     {
         return CreateYRotationMatrix(angles.y) * CreateXRotationMatrix(angles.x) * CreateZRotationMatrix(angles.z);
     }
 
-    Mat4D Mat4D::CreatePerspectiveProjectionMatrix(float near, float far, float fov)
+    Mat4 Mat4::CreatePerspectiveProjectionMatrix(float near, float far, float fov)
     {
         float s = 1.0f / tanf(Util::toRadians(fov / 2.0f));
         float param1 = -far / (far - near);
         float param2 = param1 * near;
-        Mat4D out;
+        Mat4 out;
         out.at(0, 0) = s;
         out.at(1, 1) = s;
         out.at(2, 2) = param1;
@@ -153,7 +213,7 @@ namespace Core::Maths
         return out;
     }
 
-    Mat4D Mat4D::transposeMatrix()
+    Mat4 Mat4::transposeMatrix()
     {
         float x[16] = { 0 };
         for (int j = 0; j < 4; j++)
@@ -164,10 +224,10 @@ namespace Core::Maths
             }
         }
 
-        return Mat4D{ x };
+        return Mat4{ x };
     }
 
-    void Mat4D::printMatrix(bool raw)
+    void Mat4::printMatrix(bool raw)
     {
         if (raw)
         {
@@ -193,14 +253,26 @@ namespace Core::Maths
         printf("\n");
     }
 
-    Mat4D Mat4D::Identity()
+    const std::string Mat4::toString() const
     {
-        return Mat4D(1);
+        std::string res = "( ";
+        for (int i = 0; i < 16; i++)
+        {
+            res += std::to_string(content[(i * 4) % 16 + i / 4]);
+            if (i != 15) res.append(", ");
+        }
+        res.append(")");
+        return res;
     }
 
-    Mat4D Mat4D::getCofactor(int p, int q, int n) const
+    Mat4 Mat4::Identity()
     {
-        Mat4D mat;
+        return Mat4(1);
+    }
+
+    Mat4 Mat4::getCofactor(int p, int q, int n) const
+    {
+        Mat4 mat;
         int i = 0, j = 0;
         // Looping for each element of the matrix
         for (int row = 0; row < n; row++)
@@ -227,9 +299,9 @@ namespace Core::Maths
         return mat;
     }
 
-    float Mat4D::getDeterminant(float n) const
+    float Mat4::getDeterminant(float n) const
     {
-        Mat4D a;
+        Mat4 a;
         float D = 0; // Initialize result
 
         //  Base case : if matrix contains single element
@@ -252,19 +324,19 @@ namespace Core::Maths
         return D;
     }
 
-    Mat4D Mat4D::CreateInverseMatrix() const
+    Mat4 Mat4::CreateInverseMatrix() const
     {
         // Find determinant of matrix
-        Mat4D inverse;
+        Mat4 inverse;
         float det = getDeterminant(4);
         if (det == 0)
         {
             printf("Singular matrix, can't find its inverse\n");
-            return Mat4D();
+            return Mat4();
         }
 
         // Find adjoint
-        Mat4D adj = CreateAdjMatrix();
+        Mat4 adj = CreateAdjMatrix();
 
         // Find Inverse using formula "inverse(A) = adj(A)/det(A)"
         for (int i = 0; i < 4; i++)
@@ -274,11 +346,11 @@ namespace Core::Maths
         return inverse;
     }
 
-    Mat4D Mat4D::CreateAdjMatrix() const
+    Mat4 Mat4::CreateAdjMatrix() const
     {
         // temp is used to store cofactors of matrix
-        Mat4D temp;
-        Mat4D adj;
+        Mat4 temp;
+        Mat4 adj;
         char sign = 1;
 
         for (int i = 0; i < 4; i++)
@@ -300,12 +372,12 @@ namespace Core::Maths
         return adj;
     }
 
-    Mat3D::Mat3D(float diagonal)
+    Mat3::Mat3(float diagonal)
     {
         for (size_t i = 0; i < 3; i++) content[i * 4] = diagonal;
     }
 
-    Mat3D::Mat3D(const Mat3D& in)
+    Mat3::Mat3(const Mat3& in)
     {
         for (size_t j = 0; j < 9; j++)
         {
@@ -313,7 +385,7 @@ namespace Core::Maths
         }
     }
 
-    Mat3D::Mat3D(const float* data)
+    Mat3::Mat3(const float* data)
     {
         for (size_t j = 0; j < 3; j++)
         {
@@ -324,9 +396,9 @@ namespace Core::Maths
         }
     }
 
-    Mat3D Mat3D::operator*(const Mat3D& in)
+    Mat3 Mat3::operator*(const Mat3& in)
     {
-        Mat3D out;
+        Mat3 out;
         for (size_t j = 0; j < 3; j++)
         {
             for (size_t i = 0; i < 3; i++)
@@ -341,9 +413,9 @@ namespace Core::Maths
         return out;
     }
 
-    Vec3D Mat3D::operator*(const Vec3D& in)
+    Vec3 Mat3::operator*(const Vec3& in)
     {
-        Vec3D out;
+        Vec3 out;
         for (size_t i = 0; i < 3; i++)
         {
             float res = 0;
@@ -353,9 +425,9 @@ namespace Core::Maths
         return out;
     }
 
-    Mat3D Mat3D::CreateXRotationMatrix(float angle)
+    Mat3 Mat3::CreateXRotationMatrix(float angle)
     {
-        Mat3D out = Mat3D(1);
+        Mat3 out = Mat3(1);
         float radA = Util::toRadians(angle);
         float cosA = cosf(radA);
         float sinA = sinf(radA);
@@ -366,9 +438,9 @@ namespace Core::Maths
         return out;
     }
 
-    Mat3D Mat3D::CreateYRotationMatrix(float angle)
+    Mat3 Mat3::CreateYRotationMatrix(float angle)
     {
-        Mat3D out = Mat3D(1);
+        Mat3 out = Mat3(1);
         float radA = Util::toRadians(angle);
         float cosA = cosf(radA);
         float sinA = sinf(radA);
@@ -379,9 +451,9 @@ namespace Core::Maths
         return out;
     }
 
-    Mat3D Mat3D::CreateZRotationMatrix(float angle)
+    Mat3 Mat3::CreateZRotationMatrix(float angle)
     {
-        Mat3D out = Mat3D(1);
+        Mat3 out = Mat3(1);
         float radA = Util::toRadians(angle);
         float cosA = cosf(radA);
         float sinA = sinf(radA);
@@ -392,14 +464,14 @@ namespace Core::Maths
         return out;
     }
 
-    Mat3D Mat3D::CreateScaleMatrix(const Vec3D& scale)
+    Mat3 Mat3::CreateScaleMatrix(const Vec3& scale)
     {
-        Mat3D out;
+        Mat3 out;
         for (int i = 0; i < 3; i++) out.at(i, i) = scale[i];
         return out;
     }
 
-    Mat3D Mat3D::transposeMatrix()
+    Mat3 Mat3::transposeMatrix()
     {
         float x[9] = { 0 };
         for (int j = 0; j < 3; j++)
@@ -410,10 +482,10 @@ namespace Core::Maths
             }
         }
 
-        return Mat3D{ x };
+        return Mat3{ x };
     }
 
-    void Mat3D::printMatrix(bool raw)
+    void Mat3::printMatrix(bool raw)
     {
         if (raw)
         {
@@ -439,14 +511,14 @@ namespace Core::Maths
         printf("\n");
     }
 
-    Mat3D Mat3D::Identity()
+    Mat3 Mat3::Identity()
     {
-        return Mat3D(1);
+        return Mat3(1);
     }
 
-    Mat3D Mat3D::getCofactor(int p, int q, int n)
+    Mat3 Mat3::getCofactor(int p, int q, int n)
     {
-        Mat3D mat;
+        Mat3 mat;
         int i = 0, j = 0;
         // Looping for each element of the matrix
         for (int row = 0; row < n; row++)
@@ -473,9 +545,9 @@ namespace Core::Maths
         return mat;
     }
 
-    float Mat3D::getDeterminant(float n)
+    float Mat3::getDeterminant(float n)
     {
-        Mat3D a;
+        Mat3 a;
         float D = 0; // Initialize result
 
         //  Base case : if matrix contains single element
@@ -498,10 +570,10 @@ namespace Core::Maths
         return D;
     }
 
-    Mat3D Mat3D::CreateInverseMatrix()
+    Mat3 Mat3::CreateInverseMatrix()
     {
         // Find determinant of matrix
-        Mat3D inverse;
+        Mat3 inverse;
         float det = getDeterminant(3);
         if (det == 0)
         {
@@ -510,7 +582,7 @@ namespace Core::Maths
         }
 
         // Find adjoint
-        Mat3D adj = CreateAdjMatrix();
+        Mat3 adj = CreateAdjMatrix();
 
         // Find Inverse using formula "inverse(A) = adj(A)/det(A)"
         for (int i = 0; i < 3; i++)
@@ -520,11 +592,11 @@ namespace Core::Maths
         return inverse;
     }
 
-    Mat3D Mat3D::CreateAdjMatrix()
+    Mat3 Mat3::CreateAdjMatrix()
     {
         // temp is used to store cofactors of matrix
-        Mat3D temp;
-        Mat3D adj;
+        Mat3 temp;
+        Mat3 adj;
         char sign = 1;
 
         for (int i = 0; i < 3; i++)
@@ -546,12 +618,12 @@ namespace Core::Maths
         return adj;
     }
 
-    Vec3D Core::Maths::Mat4D::GetPositionFromTranslation() const
+    Vec3 Core::Maths::Mat4::GetPositionFromTranslation() const
     {
-        return Vec3D(content[12], content[13], content[14]);
+        return Vec3(content[12], content[13], content[14]);
     }
 
-    Vec3D Core::Maths::Mat4D::GetRotationFromTranslation(const Vec3D& scale) const
+    Vec3 Core::Maths::Mat4::GetRotationFromTranslation(const Vec3& scale) const
     {
         /*
         * 00 | 04 | 08
@@ -561,7 +633,7 @@ namespace Core::Maths
         float thetaX;
         float thetaY;
         float thetaZ;
-        if (Util::minF(fabsf(scale.x), Util::minF(fabsf(scale.y), fabsf(scale.z))) < 0.0001f) return Vec3D();
+        if (Util::minF(fabsf(scale.x), Util::minF(fabsf(scale.y), fabsf(scale.z))) < 0.0001f) return Vec3();
         float a = content[9] / scale.z;
         if (a < 0.9999f)
         {
@@ -584,18 +656,18 @@ namespace Core::Maths
             thetaY = atan2(-content[4] / scale.y, content[0] / scale.x);
             thetaZ = 0;
         }
-        return Vec3D(Util::toDegrees(thetaX), Util::toDegrees(thetaY), Util::toDegrees(thetaZ));
+        return Vec3(Util::toDegrees(thetaX), Util::toDegrees(thetaY), Util::toDegrees(thetaZ));
     }
 
-    Vec3D Core::Maths::Mat4D::GetScaleFromTranslation() const
+    Vec3 Core::Maths::Mat4::GetScaleFromTranslation() const
     {
-        Vec3D x = Vec3D(content[0], content[1], content[2]);
-        Vec3D y = Vec3D(content[4], content[5], content[6]);
-        Vec3D z = Vec3D(content[8], content[9], content[10]);
-        return Vec3D(x.getLength(), y.getLength(), z.getLength());
+        Vec3 x = Vec3(content[0], content[1], content[2]);
+        Vec3 y = Vec3(content[4], content[5], content[6]);
+        Vec3 z = Vec3(content[8], content[9], content[10]);
+        return Vec3(x.getLength(), y.getLength(), z.getLength());
     }
 
-    void Core::Maths::Util::GenerateSphere(int x, int y, std::vector<Vec3D>* PosOut, std::vector<Vec3D>* NormOut, std::vector<Vec2D>* UVOut)
+    void Core::Maths::Util::GenerateSphere(int x, int y, std::vector<Vec3>* PosOut, std::vector<Vec3>* NormOut, std::vector<Vec2>* UVOut)
     {
         float DtY = 180.0f / y;
         float DtX = 360.0f / x;
@@ -607,34 +679,34 @@ namespace Core::Maths
                 {
                     PosOut->push_back(GetSphericalCoord(DtX * a, DtY * b - 90));
                     NormOut->push_back(PosOut->back());
-                    UVOut->push_back(Vec2D(0, 1));
+                    UVOut->push_back(Vec2(0, 1));
                     PosOut->push_back(GetSphericalCoord(DtX * (a + 1), DtY * b - 90));
                     NormOut->push_back(PosOut->back());
-                    UVOut->push_back(Vec2D(1, 1));
+                    UVOut->push_back(Vec2(1, 1));
                     PosOut->push_back(GetSphericalCoord(DtX * (a + 1), DtY * (b - 1) - 90));
                     NormOut->push_back(PosOut->back());
-                    UVOut->push_back(Vec2D(1, 0));
+                    UVOut->push_back(Vec2(1, 0));
                 }
                 if (b == 1) continue;
                 PosOut->push_back(GetSphericalCoord(DtX * a, DtY * (b - 1) - 90));
                 NormOut->push_back(PosOut->back());
-                UVOut->push_back(Vec2D(0, 0));
+                UVOut->push_back(Vec2(0, 0));
                 PosOut->push_back(GetSphericalCoord(DtX * a, DtY * b - 90));
                 NormOut->push_back(PosOut->back());
-                UVOut->push_back(Vec2D(0, 1));
+                UVOut->push_back(Vec2(0, 1));
                 PosOut->push_back(GetSphericalCoord(DtX * (a + 1), DtY * (b - 1) - 90));
                 NormOut->push_back(PosOut->back());
-                UVOut->push_back(Vec2D(1, 0));
+                UVOut->push_back(Vec2(1, 0));
             }
         }
     }
 
-    void Core::Maths::Util::GenerateCube(std::vector<Vec3D>* PosOut, std::vector<Vec3D>* NormOut, std::vector<Vec2D>* UVOut)
+    void Core::Maths::Util::GenerateCube(std::vector<Vec3>* PosOut, std::vector<Vec3>* NormOut, std::vector<Vec2>* UVOut)
     {
         float sign = 1.0f;
-        Vec3D V[4];
-        Vec3D N;
-        Vec2D UV[4];
+        Vec3 V[4];
+        Vec3 N;
+        Vec2 UV[4];
         for (char i = 0; i < 6; i++)
         {
             if (i == 3) sign = -sign;
@@ -666,7 +738,7 @@ namespace Core::Maths
         }
     }
 
-    void Util::GenerateDome(int x, int y, bool reversed, std::vector<Vec3D>* PosOut, std::vector<Vec3D>* NormOut, std::vector<Vec2D>* UVOut)
+    void Util::GenerateDome(int x, int y, bool reversed, std::vector<Vec3>* PosOut, std::vector<Vec3>* NormOut, std::vector<Vec2>* UVOut)
     {
         float DtY = 180.0f / y;
         float DtX = 360.0f / x;
@@ -678,29 +750,29 @@ namespace Core::Maths
                 {
                     PosOut->push_back(GetSphericalCoord(DtX * a, DtY * b - 90));
                     NormOut->push_back(PosOut->back());
-                    UVOut->push_back(Vec2D(0, 1));
+                    UVOut->push_back(Vec2(0, 1));
                     PosOut->push_back(GetSphericalCoord(DtX * (a + 1), DtY * b - 90));
                     NormOut->push_back(PosOut->back());
-                    UVOut->push_back(Vec2D(1, 1));
+                    UVOut->push_back(Vec2(1, 1));
                     PosOut->push_back(GetSphericalCoord(DtX * (a + 1), DtY * (b - 1) - 90));
                     NormOut->push_back(PosOut->back());
-                    UVOut->push_back(Vec2D(1, 0));
+                    UVOut->push_back(Vec2(1, 0));
                 }
                 if (b == 1) continue;
                 PosOut->push_back(GetSphericalCoord(DtX * a, DtY * (b - 1) - 90));
                 NormOut->push_back(PosOut->back());
-                UVOut->push_back(Vec2D(0, 0));
+                UVOut->push_back(Vec2(0, 0));
                 PosOut->push_back(GetSphericalCoord(DtX * a, DtY * b - 90));
                 NormOut->push_back(PosOut->back());
-                UVOut->push_back(Vec2D(0, 1));
+                UVOut->push_back(Vec2(0, 1));
                 PosOut->push_back(GetSphericalCoord(DtX * (a + 1), DtY * (b - 1) - 90));
                 NormOut->push_back(PosOut->back());
-                UVOut->push_back(Vec2D(1, 0));
+                UVOut->push_back(Vec2(1, 0));
             }
         }
     }
 
-    void Util::GenerateCylinder(int x, int y, std::vector<Vec3D>* PosOut, std::vector<Vec3D>* NormOut, std::vector<Vec2D>* UVOut)
+    void Util::GenerateCylinder(int x, int y, std::vector<Vec3>* PosOut, std::vector<Vec3>* NormOut, std::vector<Vec2>* UVOut)
     {
         float DtY = 2.0f / y;
         float DtX = 360.0f / x;
@@ -709,53 +781,53 @@ namespace Core::Maths
             for (int a = 0; a < x; a++)
             {
                 NormOut->push_back(GetSphericalCoord(DtX * a, 0));
-                PosOut->push_back(NormOut->back() + Vec3D(0, DtY * (b + 1) - 1, 0));
-                UVOut->push_back(Vec2D(0, 1));
+                PosOut->push_back(NormOut->back() + Vec3(0, DtY * (b + 1) - 1, 0));
+                UVOut->push_back(Vec2(0, 1));
                 NormOut->push_back(GetSphericalCoord(DtX * (a + 1), 0));
-                PosOut->push_back(NormOut->back() +Vec3D(0, DtY * (b + 1) - 1, 0));
-                UVOut->push_back(Vec2D(1, 1));
+                PosOut->push_back(NormOut->back() +Vec3(0, DtY * (b + 1) - 1, 0));
+                UVOut->push_back(Vec2(1, 1));
                 NormOut->push_back(GetSphericalCoord(DtX * (a + 1), 0));
-                PosOut->push_back(NormOut->back() + Vec3D(0, DtY * b - 1, 0));
-                UVOut->push_back(Vec2D(1, 0));
+                PosOut->push_back(NormOut->back() + Vec3(0, DtY * b - 1, 0));
+                UVOut->push_back(Vec2(1, 0));
                 NormOut->push_back(GetSphericalCoord(DtX * a, 0));
-                PosOut->push_back(NormOut->back() +Vec3D(0, DtY * b - 1, 0));
-                UVOut->push_back(Vec2D(0, 0));
+                PosOut->push_back(NormOut->back() +Vec3(0, DtY * b - 1, 0));
+                UVOut->push_back(Vec2(0, 0));
                 NormOut->push_back(GetSphericalCoord(DtX * a, 0));
-                PosOut->push_back(NormOut->back() + Vec3D(0, DtY * (b + 1) - 1, 0));
-                UVOut->push_back(Vec2D(0, 1));
+                PosOut->push_back(NormOut->back() + Vec3(0, DtY * (b + 1) - 1, 0));
+                UVOut->push_back(Vec2(0, 1));
                 NormOut->push_back(GetSphericalCoord(DtX * (a + 1), 0));
-                PosOut->push_back(NormOut->back() + Vec3D(0, DtY * b - 1, 0));
-                UVOut->push_back(Vec2D(1, 0));
+                PosOut->push_back(NormOut->back() + Vec3(0, DtY * b - 1, 0));
+                UVOut->push_back(Vec2(1, 0));
             }
         }
     }
 
-    void Util::GeneratePlane(std::vector<Vec3D>* PosOut, std::vector<Vec3D>* NormOut, std::vector<Vec2D>* UVOut)
+    void Util::GeneratePlane(std::vector<Vec3>* PosOut, std::vector<Vec3>* NormOut, std::vector<Vec2>* UVOut)
     {
-        PosOut->push_back(Vec3D(-1, 1, 0));
-        NormOut->push_back(Vec3D(0, 0, 1));
-        UVOut->push_back(Vec2D(0, 0));
-        PosOut->push_back(Vec3D(-1, -1, 0));
-        NormOut->push_back(Vec3D(0, 0, 1));
-        UVOut->push_back(Vec2D(0, 1));
-        PosOut->push_back(Vec3D(1, 1, 0));
-        NormOut->push_back(Vec3D(0, 0, 1));
-        UVOut->push_back(Vec2D(1, 0));
-        PosOut->push_back(Vec3D(1, 1, 0));
-        NormOut->push_back(Vec3D(0, 0, 1));
-        UVOut->push_back(Vec2D(1, 0));
-        PosOut->push_back(Vec3D(-1, -1, 0));
-        NormOut->push_back(Vec3D(0, 0, 1));
-        UVOut->push_back(Vec2D(0, 1));
-        PosOut->push_back(Vec3D(1, -1, 0));
-        NormOut->push_back(Vec3D(0, 0, 1));
-        UVOut->push_back(Vec2D(1, 1));
+        PosOut->push_back(Vec3(-1, 1, 0));
+        NormOut->push_back(Vec3(0, 0, 1));
+        UVOut->push_back(Vec2(0, 0));
+        PosOut->push_back(Vec3(-1, -1, 0));
+        NormOut->push_back(Vec3(0, 0, 1));
+        UVOut->push_back(Vec2(0, 1));
+        PosOut->push_back(Vec3(1, 1, 0));
+        NormOut->push_back(Vec3(0, 0, 1));
+        UVOut->push_back(Vec2(1, 0));
+        PosOut->push_back(Vec3(1, 1, 0));
+        NormOut->push_back(Vec3(0, 0, 1));
+        UVOut->push_back(Vec2(1, 0));
+        PosOut->push_back(Vec3(-1, -1, 0));
+        NormOut->push_back(Vec3(0, 0, 1));
+        UVOut->push_back(Vec2(0, 1));
+        PosOut->push_back(Vec3(1, -1, 0));
+        NormOut->push_back(Vec3(0, 0, 1));
+        UVOut->push_back(Vec2(1, 1));
     }
 
-    Vec3D Core::Maths::Util::GetSphericalCoord(float longitude, float latitude)
+    Vec3 Core::Maths::Util::GetSphericalCoord(float longitude, float latitude)
     {
         longitude = toRadians(longitude);
         latitude = toRadians(latitude);
-        return Vec3D(cosf(longitude)*cosf(latitude),sinf(latitude), sinf(longitude) * cosf(latitude));
+        return Vec3(cosf(longitude)*cosf(latitude),sinf(latitude), sinf(longitude) * cosf(latitude));
     }
 }

@@ -12,9 +12,9 @@ namespace Core::App
     class Inputs
     {
     public:
-        Core::Maths::Vec2D deltaMouse = Core::Maths::Vec2D();
-        Core::Maths::Vec2D MousePos = Core::Maths::Vec2D();
-        Core::Maths::Int2D ScreenSize = Core::Maths::Vec2D();
+        Core::Maths::Vec2 deltaMouse = Core::Maths::Vec2();
+        Core::Maths::Vec2 MousePos = Core::Maths::Vec2();
+        Core::Maths::IVec2 ScreenSize = Core::Maths::Vec2();
         char leftMouse = 0;
         char rightMouse = 0;
         bool mouseCaptured = false;
@@ -22,7 +22,7 @@ namespace Core::App
         char esc = 0;
 
         void UpdateInputs(GLFWwindow* window);
-        void InitInputs(GLFWwindow* window, Core::Maths::Int2D defaultSize);
+        void InitInputs(GLFWwindow* window, Core::Maths::IVec2 defaultSize);
         int GetLastKey();
         void ClearLastKey();
     };

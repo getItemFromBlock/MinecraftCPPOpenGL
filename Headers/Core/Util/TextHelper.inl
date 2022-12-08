@@ -156,7 +156,7 @@ bool Parsing::ReadBool(const char* buff, const int64_t index, const int64_t maxS
     return false;
 }
 
-bool Parsing::ReadVec3D(const char* buff, int64_t index, const int64_t maxSize, Core::Maths::Vec3D& result)
+bool Parsing::ReadVec3(const char* buff, int64_t index, const int64_t maxSize, Core::Maths::Vec3& result)
 {
     float a = Text::getFloat(buff, index, maxSize);
     index = Text::skipCharSafe(buff, index, maxSize);
@@ -171,11 +171,11 @@ bool Parsing::ReadVec3D(const char* buff, int64_t index, const int64_t maxSize, 
         return false;
     }
     float c = Text::getFloat(buff, index, maxSize);
-    result = Core::Maths::Vec3D(a, b, c);
+    result = Core::Maths::Vec3(a, b, c);
     return true;
 }
 
-bool Parsing::ReadVec2D(const char* buff, int64_t index, const int64_t maxSize, Core::Maths::Vec2D& result)
+bool Parsing::ReadVec2(const char* buff, int64_t index, const int64_t maxSize, Core::Maths::Vec2& result)
 {
     float a = Text::getFloat(buff, index, maxSize);
     index = Text::skipCharSafe(buff, index, maxSize);
@@ -184,7 +184,7 @@ bool Parsing::ReadVec2D(const char* buff, int64_t index, const int64_t maxSize, 
         return false;
     }
     float b = Text::getFloat(buff, index, maxSize);
-    result = Core::Maths::Vec2D(a, b);
+    result = Core::Maths::Vec2(a, b);
     return true;
 }
 

@@ -25,17 +25,17 @@ void Resources::Font::UnLoad()
 void Resources::Font::GenerateSpacings()
 {
 	if (!loaded) return;
-	Core::Maths::Int2D TileSize = Core::Maths::Int2D(sizeX / 16, sizeY / 16);
+	Core::Maths::IVec2 TileSize = Core::Maths::IVec2(sizeX / 16, sizeY / 16);
 	for (int i = 0; i < 256; i++)
 	{
-		Core::Maths::Int2D Pos = Core::Maths::Int2D(i % 16, i / 16) * TileSize;
+		Core::Maths::IVec2 Pos = Core::Maths::IVec2(i % 16, i / 16) * TileSize;
 		char c = TileSize.x;
 		while (c > 0)
 		{
 			bool clean = true;
 			for (int j = TileSize.y - 1; j >= 0; j--)
 			{
-				if (ReadPixel(Pos + Core::Maths::Int2D(c-1, j)).a > 127u)
+				if (ReadPixel(Pos + Core::Maths::IVec2(c-1, j)).a > 127u)
 				{
 					clean = false;
 					break;

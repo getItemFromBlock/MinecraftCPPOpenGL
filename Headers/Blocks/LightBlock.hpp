@@ -7,12 +7,12 @@ namespace Blocks
 	class LightBlock : public Block
 	{
 	public:
-		LightBlock(const char* Name_ID, Core::Maths::Vec3D light);
+		LightBlock(const char* Name_ID, Core::Maths::Vec3 light);
 		~LightBlock();
 
 		virtual bool IsLightBlock() override;
-		virtual Core::Maths::Vec3D GetLightValue() override;
+		virtual Core::Maths::Vec3 GetLightValue() override;
 	protected:
-		Core::Maths::Vec3D lightColor;
+		Core::Maths::Vec3 lightColor;
 	};
 }

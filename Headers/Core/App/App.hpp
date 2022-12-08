@@ -46,6 +46,11 @@ namespace Core::App
 		Right,
 		Jump,
 		Crouch,
+		Run,
+		Drop,
+		Swap,
+		Inventory,
+		View,
 		All,
 	};
 
@@ -112,8 +117,7 @@ namespace Core::App
 		bool requestEsc = false;
 		bool requestSave = false;
 		Resources::Texture* ScreenBuffer = nullptr;
-
-		BLOCK selectedBlock = BLOCK::COBBLESTONE;
+		World::World* world = nullptr;
 		unsigned int seed = 0;
 
 		unsigned int VAO;
@@ -160,6 +164,8 @@ namespace Core::App
 		static inline int GetLastKeyPressed() { return inputs.GetLastKey(); }
 
 		static inline void ClearLastKeyPressed() { inputs.ClearLastKey(); }
+
+		static inline Inputs* GetInputs() { return &inputs; }
 
 		static inline void RequestExit() { ShouldClose = true; }
 

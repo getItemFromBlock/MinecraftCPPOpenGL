@@ -193,7 +193,7 @@ void Resources::Material::Deserialize(Resources::ResourceManager* resources, con
         else if (Text::compareWord(data, pos, size, "AmbientColor"))
         {
             pos = Text::skipCharSafe(data, pos, size);
-            if (!Parsing::ReadVec3D(data, pos, size, AmbientColor))
+            if (!Parsing::ReadVec3(data, pos, size, AmbientColor))
             {
                 err = "Malformated Vec3";
                 break;
@@ -202,7 +202,7 @@ void Resources::Material::Deserialize(Resources::ResourceManager* resources, con
         else if (Text::compareWord(data, pos, size, "DiffuseColor"))
         {
             pos = Text::skipCharSafe(data, pos, size);
-            if (!Parsing::ReadVec3D(data, pos, size, DiffuseColor))
+            if (!Parsing::ReadVec3(data, pos, size, DiffuseColor))
             {
                 err = "Malformated Vec3";
                 break;
@@ -211,7 +211,7 @@ void Resources::Material::Deserialize(Resources::ResourceManager* resources, con
         else if (Text::compareWord(data, pos, size, "SpecularColor"))
         {
             pos = Text::skipCharSafe(data, pos, size);
-            if (!Parsing::ReadVec3D(data, pos, size, SpecularColor))
+            if (!Parsing::ReadVec3(data, pos, size, SpecularColor))
             {
                 err = "Malformated Vec3";
                 break;
@@ -220,7 +220,7 @@ void Resources::Material::Deserialize(Resources::ResourceManager* resources, con
         else if (Text::compareWord(data, pos, size, "EmissiveColor"))
         {
             pos = Text::skipCharSafe(data, pos, size);
-            if (!Parsing::ReadVec3D(data, pos, size, EmissiveColor))
+            if (!Parsing::ReadVec3(data, pos, size, EmissiveColor))
             {
                 err = "Malformated Vec3";
                 break;

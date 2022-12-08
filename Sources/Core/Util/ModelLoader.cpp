@@ -123,11 +123,11 @@ unsigned int GenerateChunkVertices(std::vector<Core::Util::Vertice>* vertices, s
 			data[n].norm = vertices->at(i * 3llu + n).norm;
 			data[n].UV = vertices->at(i * 3llu + n).UV;
 		}
-		Core::Maths::Vec3D A = data[1].pos - data[0].pos;
-		Core::Maths::Vec3D B = data[2].pos - data[0].pos;
-		Core::Maths::Vec2D DeltaA = data[1].UV - data[0].UV;
-		Core::Maths::Vec2D DeltaB = data[2].UV - data[0].UV;
-		Core::Maths::Vec3D tangent;
+		Core::Maths::Vec3 A = data[1].pos - data[0].pos;
+		Core::Maths::Vec3 B = data[2].pos - data[0].pos;
+		Core::Maths::Vec2 DeltaA = data[1].UV - data[0].UV;
+		Core::Maths::Vec2 DeltaB = data[2].UV - data[0].UV;
+		Core::Maths::Vec3 tangent;
 		float f = 1.0f / (DeltaA.x * DeltaB.y - DeltaB.x * DeltaA.y);
 		tangent.x = f * (DeltaB.y * A.x - DeltaA.y * B.x);
 		tangent.y = f * (DeltaB.y * A.y - DeltaA.y * B.y);
@@ -162,11 +162,11 @@ unsigned int GenerateTangentVertices(Core::Util::LoaderData* args, unsigned int 
 				data[n].UV = args->UVs->at(args->tris->at(modelIndex).at(i).texture[n]);
 			}
 		}
-		Core::Maths::Vec3D A = data[1].pos - data[0].pos;
-		Core::Maths::Vec3D B = data[2].pos - data[0].pos;
-		Core::Maths::Vec2D DeltaA = data[1].UV - data[0].UV;
-		Core::Maths::Vec2D DeltaB = data[2].UV - data[0].UV;
-		Core::Maths::Vec3D tangent;
+		Core::Maths::Vec3 A = data[1].pos - data[0].pos;
+		Core::Maths::Vec3 B = data[2].pos - data[0].pos;
+		Core::Maths::Vec2 DeltaA = data[1].UV - data[0].UV;
+		Core::Maths::Vec2 DeltaB = data[2].UV - data[0].UV;
+		Core::Maths::Vec3 tangent;
 		float f = 1.0f / (DeltaA.x * DeltaB.y - DeltaB.x * DeltaA.y);
 		tangent.x = f * (DeltaB.y * A.x - DeltaA.y * B.x);
 		tangent.y = f * (DeltaB.y * A.y - DeltaA.y * B.y);
@@ -278,9 +278,9 @@ void Core::Util::ModelLoader::ReadFace(int64_t& pos, size_t& objIndex, signed ch
 signed char Core::Util::ModelLoader::Loop(const char* path, const char* data, const int64_t& size, Core::Util::LoaderData* args)
 {
 	std::vector<std::vector<Triangle>>* faces = args->tris;
-	std::vector<Core::Maths::Vec3D>* vertices = args->verts;
-	std::vector<Core::Maths::Vec3D>* normals = args->norms;
-	std::vector<Core::Maths::Vec2D>* tCoord = args->UVs;
+	std::vector<Core::Maths::Vec3>* vertices = args->verts;
+	std::vector<Core::Maths::Vec3>* normals = args->norms;
+	std::vector<Core::Maths::Vec2>* tCoord = args->UVs;
 	size_t objIndex = 0;
 	int64_t pos = 0;
 	signed char type = -10;
@@ -320,7 +320,7 @@ signed char Core::Util::ModelLoader::Loop(const char* path, const char* data, co
 			float b = Text::getFloat(data, pos, size);
 			pos = Text::skipCharSafe(data, pos, size);
 			float c = Text::getFloat(data, pos, size);
-			vertices->push_back(Core::Maths::Vec3D(a, b, c));
+			vertices->push_back(Core::Maths::Vec3(a, b, c));
 		}
 		else if (Text::compareWord(data, pos, size, "vn "))
 		{
@@ -330,7 +330,7 @@ signed char Core::Util::ModelLoader::Loop(const char* path, const char* data, co
 			float b = Text::getFloat(data, pos, size);
 			pos = Text::skipCharSafe(data, pos, size);
 			float c = Text::getFloat(data, pos, size);
-			normals->push_back(Core::Maths::Vec3D(a, b, c));
+			normals->push_back(Core::Maths::Vec3(a, b, c));
 		}
 		else if (Text::compareWord(data, pos, size, "vt "))
 		{
@@ -338,7 +338,7 @@ signed char Core::Util::ModelLoader::Loop(const char* path, const char* data, co
 			float a = Text::getFloat(data, pos, size);
 			pos = Text::skipCharSafe(data, pos, size);
 			float b = Text::getFloat(data, pos, size);
-			tCoord->push_back(Core::Maths::Vec2D(a, b));
+			tCoord->push_back(Core::Maths::Vec2(a, b));
 		}
 		else if (Text::compareWord(data, pos, size, "f "))
 		{
@@ -355,9 +355,9 @@ void Core::Util::ModelLoader::MeshLoaderThread(LowRenderer::Model& in, const cha
 	if (!path) return;
 	std::vector<std::string> matIds;
 	std::vector<std::vector<Triangle>> tris;
-	std::vector<Core::Maths::Vec3D> verts;
-	std::vector<Core::Maths::Vec3D> norms;
-	std::vector<Core::Maths::Vec2D> UVs;
+	std::vector<Core::Maths::Vec3> verts;
+	std::vector<Core::Maths::Vec3> norms;
+	std::vector<Core::Maths::Vec2> UVs;
 	std::vector<Resources::Material*> tmats;
 	std::vector<Vertice> verticesOut;
 	std::vector<TangentVertice> tverticesOut;
@@ -462,13 +462,13 @@ void Core::Util::ModelLoader::MeshLoaderThread(LowRenderer::Model& in, const cha
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(TangentVertice), (void*)0);
 			glEnableVertexAttribArray(0);
 			// normal attribute
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(TangentVertice), (void*)(sizeof(Core::Maths::Vec3D)));
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(TangentVertice), (void*)(sizeof(Core::Maths::Vec3)));
 			glEnableVertexAttribArray(1);
 			// texture coord attribute
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(TangentVertice), (void*)(2 * sizeof(Core::Maths::Vec3D)));
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(TangentVertice), (void*)(2 * sizeof(Core::Maths::Vec3)));
 			glEnableVertexAttribArray(2);
 			// tangent attribute
-			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(TangentVertice), (void*)(2 * sizeof(Core::Maths::Vec3D) + sizeof(Core::Maths::Vec2D)));
+			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(TangentVertice), (void*)(2 * sizeof(Core::Maths::Vec3) + sizeof(Core::Maths::Vec2)));
 			glEnableVertexAttribArray(3);
 		}
 		else
@@ -478,10 +478,10 @@ void Core::Util::ModelLoader::MeshLoaderThread(LowRenderer::Model& in, const cha
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertice), (void*)0);
 			glEnableVertexAttribArray(0);
 			// normal attribute
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertice), (void*)(sizeof(Core::Maths::Vec3D)));
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertice), (void*)(sizeof(Core::Maths::Vec3)));
 			glEnableVertexAttribArray(1);
 			// texture coord attribute
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertice), (void*)(2 * sizeof(Core::Maths::Vec3D)));
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertice), (void*)(2 * sizeof(Core::Maths::Vec3)));
 			glEnableVertexAttribArray(2);
 		}
 		current->loaded = true;
@@ -542,7 +542,7 @@ void Core::Util::ModelLoader::ParseMTL(const char* path, Core::Util::LoaderData*
 			float b = Text::getFloat(data, pos, size);
 			pos = Text::skipCharSafe(data, pos, size);
 			float c = Text::getFloat(data, pos, size);
-			args->mats->at(matIndex)->AmbientColor = Core::Maths::Vec3D(a, b, c);
+			args->mats->at(matIndex)->AmbientColor = Core::Maths::Vec3(a, b, c);
 		}
 		else if (Text::compareWord(data, pos, size, "Kd "))
 		{
@@ -552,7 +552,7 @@ void Core::Util::ModelLoader::ParseMTL(const char* path, Core::Util::LoaderData*
 			float b = Text::getFloat(data, pos, size);
 			pos = Text::skipCharSafe(data, pos, size);
 			float c = Text::getFloat(data, pos, size);
-			args->mats->at(matIndex)->DiffuseColor = Core::Maths::Vec3D(a, b, c);
+			args->mats->at(matIndex)->DiffuseColor = Core::Maths::Vec3(a, b, c);
 		}
 		else if (Text::compareWord(data, pos, size, "Ks "))
 		{
@@ -562,7 +562,7 @@ void Core::Util::ModelLoader::ParseMTL(const char* path, Core::Util::LoaderData*
 			float b = Text::getFloat(data, pos, size);
 			pos = Text::skipCharSafe(data, pos, size);
 			float c = Text::getFloat(data, pos, size);
-			args->mats->at(matIndex)->SpecularColor = Core::Maths::Vec3D(a, b, c);
+			args->mats->at(matIndex)->SpecularColor = Core::Maths::Vec3(a, b, c);
 		}
 		else if (Text::compareWord(data, pos, size, "Ke "))
 		{
@@ -572,7 +572,7 @@ void Core::Util::ModelLoader::ParseMTL(const char* path, Core::Util::LoaderData*
 			float b = Text::getFloat(data, pos, size);
 			pos = Text::skipCharSafe(data, pos, size);
 			float c = Text::getFloat(data, pos, size);
-			args->mats->at(matIndex)->EmissiveColor = Core::Maths::Vec3D(a, b, c);
+			args->mats->at(matIndex)->EmissiveColor = Core::Maths::Vec3(a, b, c);
 		}
 		else if (Text::compareWord(data, pos, size, "d "))
 		{
@@ -647,13 +647,13 @@ void Core::Util::ModelLoader::LoadChunk(World::ChunkModel* in, std::vector<Verti
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(TangentVertice), (void*)0);
 	glEnableVertexAttribArray(0);
 	// normal attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(TangentVertice), (void*)(sizeof(Core::Maths::Vec3D)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(TangentVertice), (void*)(sizeof(Core::Maths::Vec3)));
 	glEnableVertexAttribArray(1);
 	// texture coord attribute
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(TangentVertice), (void*)(2 * sizeof(Core::Maths::Vec3D)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(TangentVertice), (void*)(2 * sizeof(Core::Maths::Vec3)));
 	glEnableVertexAttribArray(2);
 	// tangent attribute
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(TangentVertice), (void*)(2 * sizeof(Core::Maths::Vec3D) + sizeof(Core::Maths::Vec2D)));
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(TangentVertice), (void*)(2 * sizeof(Core::Maths::Vec3) + sizeof(Core::Maths::Vec2)));
 	glEnableVertexAttribArray(3);
 
 	in->mesh.loaded = true;
