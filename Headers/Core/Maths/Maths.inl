@@ -486,6 +486,50 @@ namespace Core::Maths
         return content[x * 3 + y];
     }
 
+    // -----------------------   Quat    ------------------------
+
+    inline float Quat::lengthSquared() const
+    {
+        return a*a + v.lengthSquared();
+    }
+
+    inline float Quat::getLength() const
+    {
+        return sqrtf(lengthSquared());
+    }
+
+    inline Quat Core::Maths::Quat::Conjugate() const
+    {
+        return Quat(-v, a);
+    }
+
+    inline Quat Core::Maths::Quat::Inverse() const
+    {
+        float lq = lengthSquared();
+        if (lq < 1e-5f) return *this;
+        return Quat(v / lq, a / lq);
+    }
+
+    inline Quat Quat::operator+(const Quat& other) const
+    {
+        return Quat(v + other.v, a + other.a);
+    }
+
+    inline Quat Quat::operator-(const Quat& other) const
+    {
+        return Quat(v - other.v, a - other.a);
+    }
+
+    inline Quat Quat::operator-() const
+    {
+        return Quat(-v, -a);
+    }
+
+    inline Quat Quat::operator*(const Quat& other) const
+    {
+        return Quat(other.v * a + v * other.a + v.crossProduct(other.v), a*other.a - v.dotProduct(other.v));
+    }
+
     // ----------------------- Math Utils -----------------------
 
     inline float Util::toRadians(float in)

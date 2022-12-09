@@ -461,8 +461,35 @@ namespace Core::Maths
         // Recursive function for finding determinant of matrix. n is current dimension of 'in'.
         float getDeterminant(float n);
     };
+    
+    class Quat
+    {
+    public:
+        Vec3 v;
+        float a;
 
-    struct Viewport;
+        inline Quat() : v(), a(1) {}
+
+        inline Quat(Vec3 vector, float real) : v(vector), a(real) {}
+
+        // Return the length squared
+        inline float lengthSquared() const;
+
+        // Return the length
+        inline float getLength() const;
+
+        inline Quat Conjugate() const;
+
+        inline Quat Inverse() const;
+
+        inline Quat operator+(const Quat& other) const;
+
+        inline Quat operator-(const Quat& other) const;
+
+        inline Quat operator-() const;
+
+        inline Quat operator*(const Quat& other) const;
+    };
 
     namespace Util
     {
