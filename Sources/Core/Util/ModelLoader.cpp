@@ -577,12 +577,12 @@ void Core::Util::ModelLoader::ParseMTL(const char* path, Core::Util::LoaderData*
 		else if (Text::compareWord(data, pos, size, "d "))
 		{
 			pos = Text::skipCharSafe(data, pos, size);
-			args->mats->at(matIndex)->Alpha = Core::Maths::Util::cut(Text::getFloat(data, pos, size), 0.0f, 1.0f);
+			args->mats->at(matIndex)->Alpha = Core::Maths::Util::clamp(Text::getFloat(data, pos, size), 0.0f, 1.0f);
 		}
 		else if (Text::compareWord(data, pos, size, "Tr "))
 		{
 			pos = Text::skipCharSafe(data, pos, size);
-			args->mats->at(matIndex)->Alpha = Core::Maths::Util::cut(1.0f - Text::getFloat(data, pos, size), 0.0f, 1.0f);
+			args->mats->at(matIndex)->Alpha = Core::Maths::Util::clamp(1.0f - Text::getFloat(data, pos, size), 0.0f, 1.0f);
 		}
 		else if (Text::compareWord(data, pos, size, "map_Kd_Nearest"))
 		{

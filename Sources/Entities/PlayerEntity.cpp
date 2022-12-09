@@ -288,7 +288,7 @@ void Entities::PlayerEntity::poseRightArm() {
         //AnimationUtils.animateCrossbowHold(rightArm, leftArm, head, true);
         break;
     case ArmPose::SPYGLASS:
-        rightArm->rotation.x = Util::cut(head->rotation.x - 1.9198622F - (crouching ? 0.2617994F : 0.0F), -2.4F, 3.3F);
+        rightArm->rotation.x = Util::clamp(head->rotation.x - 1.9198622F - (crouching ? 0.2617994F : 0.0F), -2.4F, 3.3F);
         rightArm->rotation.y = head->rotation.y - 0.2617994F;
     }
 
@@ -324,7 +324,7 @@ void Entities::PlayerEntity::poseLeftArm() {
         //AnimationUtils.animateCrossbowHold(rightArm, leftArm, head, false);
         break;
     case ArmPose::SPYGLASS:
-        leftArm->rotation.x = Util::cut(head->rotation.x - 1.9198622F - (crouching ? 0.2617994F : 0.0F), -2.4F, 3.3F);
+        leftArm->rotation.x = Util::clamp(head->rotation.x - 1.9198622F - (crouching ? 0.2617994F : 0.0F), -2.4F, 3.3F);
         leftArm->rotation.y = head->rotation.y + 0.2617994F;
     }
 

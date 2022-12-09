@@ -162,25 +162,7 @@ namespace Core::Maths
 
     inline float Core::Maths::Vec2::GetAngle() const
     {
-        if (lengthSquared() == 0.0f) return 0.0f;
-        Vec2 tmp = unitVector();
-        float outValue;
-        if (tmp.x == 0)
-        {
-            if (tmp.y > 0)
-                outValue = (float)M_PI / 2.0f;
-            else
-                outValue = -(float)M_PI / 2.0f;
-        }
-        else
-        {
-            outValue = (atanf(tmp.y / tmp.x));
-            if (tmp.x < 0)
-            {
-                outValue += (float)M_PI;
-            }
-        }
-        return Util::toDegrees(outValue);
+        return atan2f(y,x);
     }
 
     inline bool Vec2::isNearlyEqual(Vec2 a, float prec)
@@ -456,10 +438,10 @@ namespace Core::Maths
 
     inline Color4::Color4(const Vec4& in)
     {
-        r = (unsigned char)(Util::cut(in[0], 0, 1) * 255);
-        g = (unsigned char)(Util::cut(in[1], 0, 1) * 255);
-        b = (unsigned char)(Util::cut(in[2], 0, 1) * 255);
-        a = (unsigned char)(Util::cut(in[3], 0, 1) * 255);
+        r = (unsigned char)(Util::clamp(in[0], 0.0f, 1.0f) * 255);
+        g = (unsigned char)(Util::clamp(in[1], 0.0f, 1.0f) * 255);
+        b = (unsigned char)(Util::clamp(in[2], 0.0f, 1.0f) * 255);
+        a = (unsigned char)(Util::clamp(in[3], 0.0f, 1.0f) * 255);
     }
 
     inline Color4 Color4::operator*(const float& in) const
@@ -516,7 +498,7 @@ namespace Core::Maths
         return in * 180.0f / (float)M_PI;
     }
 
-    inline float Util::cut(float in, float min, float max)
+    inline float Util::clamp(float in, float min, float max)
     {
         if (in < min)
             in = min;
@@ -525,7 +507,7 @@ namespace Core::Maths
         return in;
     }
 
-    inline int Util::cutInt(int in, int min, int max)
+    inline int Util::iclamp(int in, int min, int max)
     {
         if (in < min)
             in = min;

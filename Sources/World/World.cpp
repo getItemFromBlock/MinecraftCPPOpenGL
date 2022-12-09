@@ -121,13 +121,12 @@ void World::World::UpdateWorld(double systemTime, float deltaTime)
 	{
 		Entities::EntityLivingBase* entity = e->second;
 		e->second->Update(deltaTime);
-		Core::Maths::IVec3 entityPos = Core::Maths::IVec3((int)entity->Position.x, (int)entity->Position.y, (int)entity->Position.z);
+		Core::Maths::IVec3 entityPos = IVec3((int)roundf(entity->Position.x - 0.5f), (int)roundf(entity->Position.y - 0.5f), (int)roundf(entity->Position.z - 0.5f));
 		if (entityPos.y < -96)
 		{
 			entity->Velocity.y = 0.0f;
 			entity->Position.y = generator.wFunc(entityPos.x, entityPos.z) + 1.0f;
 		}
-		for (char i = 0; i < 3; i++) if (entity->Position[i] < 0.0f) entityPos[i] -= 1;
 		std::vector<Blocks::Block*> blocks;
 		std::vector<Core::Maths::IVec3> bPos;
 		for (int i = entityPos.x - 1; i <= entityPos.x + 1; i++)

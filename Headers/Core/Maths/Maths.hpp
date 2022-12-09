@@ -8,7 +8,7 @@ namespace Core::Maths
 {
 
     static const float VEC_COLLINEAR_PRECISION = 0.001f;
-    static const float VEC_HIGH_VALUE = 1e20f;
+    static const float VEC_HIGH_VALUE = 1e38f;
 
     class Vec2;
 
@@ -54,6 +54,9 @@ namespace Core::Maths
 
         // Return a new Vec2 initialised with 'a' and 'b'
         inline Vec2(float a, float b) : x(a), y(b) {}
+
+        // Return a new Vec2 equivalent to Vec(1,0) rotated by angle (in radians)
+        inline Vec2(float angle) : Vec2(cosf(angle), sinf(angle)) {}
 
         // Return a new Vec2 initialised with 'in'
         inline Vec2(const Vec2& in) : x(in.x), y(in.y) {}
@@ -115,6 +118,7 @@ namespace Core::Maths
         // return true if 'a' converted to int is equivalent to 'in' converted to int
         inline bool isIntEquivalent(Vec2 a) const;
 
+        // Get the angle defined by this vector, in radians
         inline float GetAngle() const;
 		
 		inline bool isNearlyEqual(Vec2 a, float prec = 1e-5f);
@@ -468,9 +472,9 @@ namespace Core::Maths
         // Return the given angular value in radians converted to degrees
         inline float toDegrees(float in);
 
-        inline float cut(float in, float min, float max);
+        inline float clamp(float in, float min = 0.0f, float max = 1.0f);
 
-        inline int cutInt(int in, int min, int max);
+        inline int iclamp(int in, int min, int max);
 
         inline float lerp(float delta, float min, float max);
 

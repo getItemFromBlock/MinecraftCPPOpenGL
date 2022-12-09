@@ -21,7 +21,7 @@ void LowRenderer::Rendering::EditorCamera::Update(const Core::App::Inputs& input
         distance = 5.0f;
         // Update rotation.
         rotation = rotation + Vec3(-inputs.deltaMouse.x, inputs.deltaMouse.y, 0) * RotationSpeed;
-        rotation = Vec3(Util::mod(rotation.x, 360), Util::cut(rotation.y, -90.0f, 90.0f), Util::mod(rotation.z, 360));
+        rotation = Vec3(Util::mod(rotation.x, 360), Util::clamp(rotation.y, -90.0f, 90.0f), Util::mod(rotation.z, 360));
     }
 
     // Update distance.
@@ -39,7 +39,7 @@ void LowRenderer::Rendering::EditorCamera::Update(const Core::App::Inputs& input
         distance = 5.0f;
         // Update rotation.
         rotation = rotation + Vec3(-inputs.deltaMouse.x, inputs.deltaMouse.y, 0) * RotationSpeed;
-        rotation = Vec3(Util::mod(rotation.x, 360), Util::cut(rotation.y, -90.0f, 90.0f), Util::mod(rotation.z, 360));
+        rotation = Vec3(Util::mod(rotation.x, 360), Util::clamp(rotation.y, -90.0f, 90.0f), Util::mod(rotation.z, 360));
     }
 
     // Update distance.

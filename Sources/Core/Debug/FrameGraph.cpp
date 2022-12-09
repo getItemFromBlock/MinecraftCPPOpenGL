@@ -38,7 +38,7 @@ void Core::Debug::FrameGraph::Update(float deltaTime)
 	Core::Maths::Color4 color = Core::Maths::Color4(Core::Maths::Vec4((value-1.0f/60)/delta, 1 - (value - 1.0f / 60) / delta, 0.0f));
 	for (unsigned int i = 0; i < height; i++)
 	{
-		if (i < Core::Maths::Util::cut(1 - value / delta, 0, 1) * height)
+		if (i < Core::Maths::Util::clamp(1 - value / delta, 0, 1) * height)
 			data[(i + 1) * width - 1] = Core::Maths::Color4();
 		else
 			data[(i + 1) * width - 1] = color;
