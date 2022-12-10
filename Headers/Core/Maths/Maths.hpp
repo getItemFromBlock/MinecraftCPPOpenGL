@@ -346,7 +346,6 @@ namespace Core::Maths
         */
         float content[16] = { 0 };
 
-        // Return a new empty Vec4
         Mat4() {}
 
         Mat4(float diagonal);
@@ -421,12 +420,13 @@ namespace Core::Maths
         */
         float content[9] = { 0 };
 
-        // Return a new empty Vec4
         Mat3() {}
 
         Mat3(float diagonal);
 
         Mat3(const Mat3& in);
+
+        Mat3(const Mat4& in);
 
         Mat3(const float* data);
 
@@ -447,6 +447,8 @@ namespace Core::Maths
         Mat3 transposeMatrix();
 
         inline float& operator[](const size_t a);
+
+        inline const float& operator[](const size_t a) const;
 
         inline float& at(const unsigned char x, const unsigned char y);
 
@@ -472,6 +474,10 @@ namespace Core::Maths
 
         inline Quat(Vec3 vector, float real) : v(vector), a(real) {}
 
+        inline Quat(const Mat3& in);
+
+        inline Quat(const Mat4& in);
+
         // Return the length squared
         inline float lengthSquared() const;
 
@@ -482,6 +488,17 @@ namespace Core::Maths
 
         inline Quat Inverse() const;
 
+        // Makes a quaternion representing a rotation in 3d space. Angle is in radians.
+        static Quat AxisAngle(Vec3 axis, float angle);
+
+        inline float GetAngle();
+
+        inline Vec3 GetAxis();
+
+        inline Mat3 GetRotationMatrix3();
+
+        inline Mat4 GetRotationMatrix4();
+
         inline Quat operator+(const Quat& other) const;
 
         inline Quat operator-(const Quat& other) const;
@@ -489,6 +506,16 @@ namespace Core::Maths
         inline Quat operator-() const;
 
         inline Quat operator*(const Quat& other) const;
+
+        inline Vec3 operator*(const Vec3& other) const;
+
+        inline Quat operator*(const float scalar) const;
+
+        inline Vec3 GetRight() const;
+
+        inline Vec3 GetUp() const;
+
+        inline Vec3 GetFront() const;
     };
 
     namespace Util
@@ -504,6 +531,8 @@ namespace Core::Maths
         inline int iclamp(int in, int min, int max);
 
         inline float lerp(float delta, float min, float max);
+
+        inline Quat slerp(const Quat& a, Quat b, float alpha);
 
         inline float mod(float in, float value);
 

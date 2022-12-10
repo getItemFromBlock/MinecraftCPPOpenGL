@@ -480,6 +480,12 @@ namespace Core::Maths
         return content[in];
     }
 
+    inline const float& Mat3::operator[](const size_t in) const
+    {
+        Assert(in < 9);
+        return content[in];
+    }
+
     inline float& Mat3::at(const unsigned char x, const unsigned char y)
     {
         Assert(x < 3 && y < 3);
@@ -487,6 +493,18 @@ namespace Core::Maths
     }
 
     // -----------------------   Quat    ------------------------
+
+    inline Quat::Quat(const Mat3& in)
+    {
+        a = sqrtf(1 + in[0] + in[4] + in[8]) / 2.0f;
+        v = Vec3(in[5] - in[7], in[6] - in[2], in[1] - in[3]) / (4*a);
+    }
+
+    inline Quat::Quat(const Mat4& in)
+    {
+        a = sqrtf(1 + in[0] + in[5] + in[10]) / 2.0f;
+        v = Vec3(in[6] - in[9], in[8] - in[2], in[1] - in[4]) / (4 * a);
+    }
 
     inline float Quat::lengthSquared() const
     {
@@ -510,6 +528,59 @@ namespace Core::Maths
         return Quat(v / lq, a / lq);
     }
 
+    inline Quat Quat::AxisAngle(Vec3 axis, float angle)
+    {
+        float hAngle = angle / 2;
+        return Quat(axis * sinf(hAngle), cosf(hAngle));
+    }
+
+    inline float Quat::GetAngle()
+    {
+        return 2 * acosf(a);
+    }
+
+    inline Vec3 Quat::GetAxis()
+    {
+        float factor = sqrtf(1-a*a);
+        return v / factor;
+    }
+
+    inline Mat3 Quat::GetRotationMatrix3()
+    {
+        Mat3 result;
+        float b = v.x;
+        float c = v.y;
+        float d = v.z;
+        result.at(0, 0) = 2 * (a*a + b*b) - 1;
+        result.at(1, 0) = 2 * (b*c - d*a);
+        result.at(2, 0) = 2 * (b*d + c*a);
+        result.at(0, 1) = 2 * (b*c + d*a);
+        result.at(1, 1) = 2 * (a*a + c*c) - 1;
+        result.at(2, 1) = 2 * (c*d - b*a);
+        result.at(0, 2) = 2 * (b*d - c*a);
+        result.at(1, 2) = 2 * (c*d + b*a);
+        result.at(2, 2) = 2 * (a*a + d*d) - 1;
+        return result;
+    }
+
+    inline Mat4 Quat::GetRotationMatrix4()
+    {
+        Mat4 result;
+        float b = v.x;
+        float c = v.y;
+        float d = v.z;
+        result.at(0, 0) = 2 * (a * a + b * b) - 1;
+        result.at(1, 0) = 2 * (b * c - d * a);
+        result.at(2, 0) = 2 * (b * d + c * a);
+        result.at(0, 1) = 2 * (b * c + d * a);
+        result.at(1, 1) = 2 * (a * a + c * c) - 1;
+        result.at(2, 1) = 2 * (c * d - b * a);
+        result.at(0, 2) = 2 * (b * d - c * a);
+        result.at(1, 2) = 2 * (c * d + b * a);
+        result.at(2, 2) = 2 * (a * a + d * d) - 1;
+        return result;
+    }
+
     inline Quat Quat::operator+(const Quat& other) const
     {
         return Quat(v + other.v, a + other.a);
@@ -528,6 +599,32 @@ namespace Core::Maths
     inline Quat Quat::operator*(const Quat& other) const
     {
         return Quat(other.v * a + v * other.a + v.crossProduct(other.v), a*other.a - v.dotProduct(other.v));
+    }
+
+    inline Vec3 Quat::operator*(const Vec3& other) const
+    {
+        Quat tmp = operator*(Quat(other, 0.0f)) * Inverse();
+        return Vec3(tmp.v);
+    }
+
+    inline Quat Quat::operator*(const float scalar) const
+    {
+        return Quat(v * scalar, a * scalar);
+    }
+
+    inline Vec3 Quat::GetRight() const
+    {
+        return operator*(Vec3(1,0,0));
+    }
+
+    inline Vec3 Quat::GetUp() const
+    {
+        return operator*(Vec3(0, 1, 0));
+    }
+
+    inline Vec3 Quat::GetFront() const
+    {
+        return operator*(Vec3(0, 0, 1));
     }
 
     // ----------------------- Math Utils -----------------------
@@ -563,6 +660,31 @@ namespace Core::Maths
     inline float Util::lerp(float delta, float min, float max)
     {
         return min + delta * (max - min);
+    }
+
+    Quat Util::slerp(const Quat& a, Quat b, float alpha)
+    {
+        Quat result = Quat();
+        float cosHalfTheta = a.a * b.a + a.v.x * b.v.x + a.v.y * b.v.y + a.v.z * b.v.z;
+        if (cosHalfTheta < 0) {
+            b = -b;
+            cosHalfTheta = -cosHalfTheta;
+        }
+        if (fabsf(cosHalfTheta) >= 1.0f) {
+            result = a;
+            return result;
+        }
+        float halfTheta = acosf(cosHalfTheta);
+        float sinHalfTheta = sqrtf(1.0f - cosHalfTheta * cosHalfTheta);
+        if (fabsf(sinHalfTheta) < 0.001f)
+        {
+            result = a * 0.5f + b * 0.5f;
+            return result;
+        }
+        float ratioA = sinf((1 - alpha) * halfTheta) / sinHalfTheta;
+        float ratioB = sinf(alpha * halfTheta) / sinHalfTheta;
+        result = a * ratioA + b * ratioB;
+        return result;
     }
 
     inline float Util::mod(float in, float value)

@@ -385,6 +385,17 @@ namespace Core::Maths
         }
     }
 
+    Mat3::Mat3(const Mat4& in)
+    {
+        size_t index = 0;
+        for (size_t j = 0; j < 11; j++)
+        {
+            if (j == 3 || j == 7) continue;
+            content[index] = in.content[j];
+            index++;
+        }
+    }
+
     Mat3::Mat3(const float* data)
     {
         for (size_t j = 0; j < 3; j++)
