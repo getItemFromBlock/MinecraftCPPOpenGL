@@ -31,7 +31,7 @@ void Entities::EntityLivingBase::Update(float deltatime)
 	Rotation = ViewRotation.y;
 }
 
-Entities::EntityLivingBase::EntityLivingBase()
+Entities::EntityLivingBase::EntityLivingBase() : Entity()
 {
 	OnGround = true;
 	MaxHealth = 20.0f;

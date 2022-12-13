@@ -265,6 +265,7 @@
     <ClInclude Include="Headers\Entities\Model\CubeModel.hpp" />
     <ClInclude Include="Headers\Entities\Model\CubeModelVertice.hpp" />
     <ClInclude Include="Headers\Entities\Model\EntityModel.hpp" />
+    <ClInclude Include="Headers\Entities\PigEntity.hpp" />
     <ClInclude Include="Headers\Entities\PlayerEntity.hpp" />
     <ClInclude Include="Headers\LowRenderer\GameUI\UIBindingButton.hpp" />
     <ClInclude Include="Headers\LowRenderer\GameUI\UIButton.hpp" />

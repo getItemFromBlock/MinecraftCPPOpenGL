@@ -10,7 +10,7 @@ namespace Entities
 	{
 	public:
 
-		PlayerEntity();
+		PlayerEntity(const char* name = "");
 
 		virtual void Update(float deltatime) override;
 		virtual void DamageEntity(float Amount) override;

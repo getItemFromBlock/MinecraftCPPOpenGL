@@ -1,9 +1,24 @@
 #include "Entities/PlayerEntity.hpp"
 
 #include "Core/Debug/Log.hpp"
+#include "Core/App/App.hpp"
 
-Entities::PlayerEntity::PlayerEntity()
+Entities::PlayerEntity::PlayerEntity(const char* name)
 {
+    if (!name || name[0] == 0)
+    {
+        uuid = Core::App::App::GetRNG().nextLong();
+    }
+    else
+    {
+        // TODO
+    }
+    OnGround = true;
+    MaxHealth = 20.0f;
+    Health = 20.0f;
+    MovementSpeed = 0.005f;
+    Rotation = 0.0f;
+    EyeHeight = 1.75f;
 	HitBox = Core::Util::Box(Core::Maths::Vec3(0.0f, 0.95f, 0.0f), Core::Maths::Vec3(0.55f, 1.9f, 0.55f));
 	head = model.AddOrReplacePart("head", (new Model::BodyPart())->addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F)->texOffs(0, 0));
 	hat = model.AddOrReplacePart("hat", (new Model::BodyPart())->addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F)->extend(0.5f)->texOffs(32, 0));

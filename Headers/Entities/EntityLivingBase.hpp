@@ -2,6 +2,7 @@
 
 #include "Entity.hpp"
 #include "Model/EntityModel.hpp"
+#include "Resources/Texture.hpp"
 #include "Core/Util/HitBox.hpp"
 
 namespace Physics
@@ -43,12 +44,13 @@ namespace Entities
 	protected:
 		Core::Util::Box HitBox;
 		Model::EntityModel model;
+		
 		float swimAmount = 0.0f;
 		float animCounter = 0.0f;
 		bool riding = false;
 		EntityLivingBase* ridingEntity = nullptr;
 		float rotlerpRad(float a, float b, float c);
-
+		Resources::Texture entityTexture;
 		Vec3 getRidePosition(EntityLivingBase* entity);
 
 		friend class Physics::PhysicsHandler;
