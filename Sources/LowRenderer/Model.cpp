@@ -85,7 +85,8 @@ void LowRenderer::Model::SetColor(Core::Maths::Vec3 newColor)
 
 void LowRenderer::Model::SetTexture(unsigned int textureID)
 {
-	for (size_t i = 0; i < materials.size(); i++) materials[i].GetTexture()->SetTextureID(textureID);
+	LOG("Wut");
+	//for (size_t i = 0; i < materials.size(); i++) materials[i].GetTexture()->SetTextureID(textureID);
 }
 
 void LowRenderer::Model::LoadMesh(const char* path, Resources::ResourceManager* manager, Resources::MaterialManager* materialManager, Resources::TextureManager* textureManager, Resources::MeshManager* meshManager)
@@ -116,7 +117,7 @@ void LowRenderer::Model::CreateFrom(const Model* other)
 
 void LowRenderer::Model::DeleteModel()
 {
-	for (size_t i = 0; i < materials.size(); i++) materials[i].UnLoad();
+	//for (size_t i = 0; i < materials.size(); i++) materials[i].UnLoad();
 	materials.clear();
 	this->~Model();
 }

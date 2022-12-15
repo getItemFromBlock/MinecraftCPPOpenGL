@@ -48,7 +48,7 @@ bool LowRenderer::Lightning::ShadowMapBuffer::Init(unsigned int width, unsigned 
 		LOG("Error, could not create FrameBuffer : 0x%x\n", Status);
 		return false;
 	}
-	loaded = true;
+	loaded.Store(true);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	return true;
 }
@@ -69,7 +69,7 @@ void LowRenderer::Lightning::ShadowMapBuffer::BindForReading()
 void LowRenderer::Lightning::ShadowMapBuffer::Load(const char* path)
 {
 	fullPath = path;
-	if (loaded) UnLoad();
+	if (loaded.Load()) UnLoad();
 	int startIndex = 0;
 	char tmp;
 	for (int i = 0; i < 255; i++)
@@ -94,12 +94,12 @@ void LowRenderer::Lightning::ShadowMapBuffer::Load(const char* path)
 	}
 	Name[index] = 0;
 	Init(Resolution, Resolution);
-	loaded = true;
+	loaded.Store(true);
 }
 
 void LowRenderer::Lightning::ShadowMapBuffer::UnLoad()
 {
-	if (!loaded) return;
+	if (!loaded.Load()) return;
 	Resources::Texture::UnLoad();
 	glDeleteFramebuffers(1, &FBO);
 	this->~ShadowMapBuffer();

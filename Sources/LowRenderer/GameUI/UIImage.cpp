@@ -22,7 +22,7 @@ LowRenderer::GameUI::UIImage::~UIImage()
 
 void LowRenderer::GameUI::UIImage::DeleteElement()
 {
-	Mat.UnLoad();
+	//Mat.UnLoad();
 	UIElement::DeleteElement();
 	this->~UIImage();
 }

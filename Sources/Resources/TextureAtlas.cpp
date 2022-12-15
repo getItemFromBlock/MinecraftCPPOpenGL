@@ -67,6 +67,11 @@ Core::Maths::Vec2 Resources::TextureAtlas::GetTextureSize()
 	return Core::Maths::Vec2(16*1.0f/size.x, 16 * 1.0f / size.y);
 }
 
+Core::Maths::IVec2 Resources::TextureAtlas::GetTextureResolution()
+{
+	return size;
+}
+
 void Resources::TextureAtlas::FillRegion(Core::Maths::IVec2 position, Core::Maths::IVec2 fillSize, const Core::Maths::Color4* data, int dataWidth)
 {
 	if (position.x < 0 || fillSize.x <= 0 || position.x + fillSize.x > size.x ||

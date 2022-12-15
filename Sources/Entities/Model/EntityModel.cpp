@@ -55,7 +55,19 @@ void EntityModel::Render(Core::Maths::Vec3 position, float rotation, World::Worl
 		if (currentCk) currentCk->SetupLightForRender(shaderProgram);
 		glUniformMatrix4fv(shaderProgram->GetLocation(Resources::ShaderData::MVP), 1, GL_FALSE, mvp.content);
 		glUniformMatrix4fv(shaderProgram->GetLocation(Resources::ShaderData::M), 1, GL_FALSE, modelMat.content);
-		glUniform1i(shaderProgram->GetLocation(Resources::ShaderData::Texture), texture);
+		if (texture)
+		{
+			glUniform1i(shaderProgram->GetLocation(Resources::ShaderData::Texture), texture->GetTextureID());
+		}
+		else
+		{
+			glUniform1i(shaderProgram->GetLocation(Resources::ShaderData::Texture), 1);
+		}
 		i->second->Render(VAOCurrent);
 	}
+}
+
+void Entities::Model::EntityModel::SetTexture(Resources::Texture* tex)
+{
+	texture = tex;
 }

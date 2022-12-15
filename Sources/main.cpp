@@ -16,7 +16,7 @@ int main(int argc, char** argv)
 {
 #ifdef _DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(49060);
+	//_CrtSetBreakAlloc(856);
 #endif
 	{
 		Core::App::AppInit data = { 1200, 900, 4, 5, "Minecraft C++", Core::Debug::Log::glDebugOutput };

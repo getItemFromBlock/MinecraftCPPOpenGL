@@ -48,14 +48,12 @@ bool LowRenderer::Rendering::FrameBuffer::Init(unsigned int width, unsigned int 
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, (void*)0);
 
-	glGenSamplers(1, &textureSampler);
-	glSamplerParameteri(textureSampler, GL_TEXTURE_WRAP_S, GetTextureWrap(TWrap));
-	glSamplerParameteri(textureSampler, GL_TEXTURE_WRAP_T, GetTextureWrap(TWrap));
-	glSamplerParameteri(textureSampler, GL_TEXTURE_MAG_FILTER, GetTextureFilter(TFilter));
-	glSamplerParameteri(textureSampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GetTextureWrap(TWrap));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GetTextureWrap(TWrap));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GetTextureFilter(TFilter));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 	glBindTextureUnit(textureID, textureID);
-	glBindSampler(textureID, textureSampler);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
@@ -71,7 +69,7 @@ bool LowRenderer::Rendering::FrameBuffer::Init(unsigned int width, unsigned int 
 		LOG("Error, could not create FrameBuffer : 0x%x\n", Status);
 		return false;
 	}
-	loaded = true;
+	loaded.Store(true);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	return true;
 }
@@ -93,9 +91,9 @@ void LowRenderer::Rendering::FrameBuffer::Update(unsigned int width, unsigned in
 {
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, (void*)0);
-	glSamplerParameteri(textureSampler, GL_TEXTURE_WRAP_S, GetTextureWrap(TWrap));
-	glSamplerParameteri(textureSampler, GL_TEXTURE_WRAP_T, GetTextureWrap(TWrap));
-	glSamplerParameteri(textureSampler, GL_TEXTURE_MAG_FILTER, GetTextureFilter(TFilter));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GetTextureWrap(TWrap));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GetTextureWrap(TWrap));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GetTextureFilter(TFilter));
 	WrapType = TWrap;
 	FilterType = TFilter;
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO);
@@ -110,7 +108,7 @@ void LowRenderer::Rendering::FrameBuffer::Update(unsigned int width, unsigned in
 void LowRenderer::Rendering::FrameBuffer::Load(const char* path)
 {
 	fullPath = path;
-	if (loaded) UnLoad();
+	if (loaded.Load()) UnLoad();
 	int startIndex = 0;
 	char tmp;
 	for (int i = 0; i < 255; i++)
@@ -134,12 +132,12 @@ void LowRenderer::Rendering::FrameBuffer::Load(const char* path)
 		index++;
 	}
 	Name[index] = 0;
-	loaded = true;
+	loaded.Store(true);
 }
 
 void LowRenderer::Rendering::FrameBuffer::UnLoad()
 {
-	if (!loaded) return;
+	if (!loaded.Load()) return;
 	Texture::UnLoad();
 	glDeleteFramebuffers(1,&FBO);
 	glDeleteRenderbuffers(1, &depthID);

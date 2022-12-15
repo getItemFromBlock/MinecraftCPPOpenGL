@@ -167,12 +167,15 @@
     <ClCompile Include="Sources\Core\Util\JsonReader.cpp" />
     <ClCompile Include="Sources\Core\Util\PositionHasher.cpp" />
     <ClCompile Include="Sources\Core\Util\Shape.cpp" />
+    <ClCompile Include="Sources\Core\Util\Signal.cpp" />
+    <ClCompile Include="Sources\Core\Util\ThreadHandler.cpp" />
     <ClCompile Include="Sources\Entities\ClientPlayerEntity.cpp" />
     <ClCompile Include="Sources\Entities\Entity.cpp" />
     <ClCompile Include="Sources\Entities\EntityLivingBase.cpp" />
     <ClCompile Include="Sources\Entities\Model\BodyPart.cpp" />
     <ClCompile Include="Sources\Entities\Model\EntityModel.cpp" />
     <ClCompile Include="Sources\Entities\PlayerEntity.cpp" />
+    <ClCompile Include="Sources\Resources\PlayerTexture.cpp" />
     <ClCompile Include="Sources\Resources\TextureAtlas.cpp" />
     <ClCompile Include="Sources\World\ChunkGenerator.cpp" />
     <ClCompile Include="Sources\World\ChunkModel.cpp" />
@@ -256,7 +259,9 @@
     <ClInclude Include="Headers\Core\Util\ModelLoader.hpp" />
     <ClInclude Include="Headers\Core\Util\Sides.hpp" />
     <ClInclude Include="Headers\Core\Util\SideType.hpp" />
+    <ClInclude Include="Headers\Core\Util\Signal.hpp" />
     <ClInclude Include="Headers\Core\Util\TextHelper.hpp" />
+    <ClInclude Include="Headers\Core\Util\ThreadHandler.hpp" />
     <ClInclude Include="Headers\Entities\ClientPlayerEntity.hpp" />
     <ClInclude Include="Headers\Entities\Entity.hpp" />
     <ClInclude Include="Headers\Entities\EntityLivingBase.hpp" />
@@ -283,6 +288,7 @@
     <ClInclude Include="Headers\LowRenderer\Rendering\FrameBuffer.hpp" />
     <ClInclude Include="Headers\LowRenderer\Rendering\ReflectionCamera.hpp" />
     <ClInclude Include="Headers\LowRenderer\Rendering\RenderCamera.hpp" />
+    <ClInclude Include="Headers\Networking\Network.hpp" />
     <ClInclude Include="Headers\Physics\PhysicsHandler.hpp" />
     <ClInclude Include="Headers\Physics\RigidBody.hpp" />
     <ClInclude Include="Headers\Physics\Transform.hpp" />
@@ -292,6 +298,7 @@
     <ClInclude Include="Headers\Resources\MaterialManager.hpp" />
     <ClInclude Include="Headers\Resources\Mesh.hpp" />
     <ClInclude Include="Headers\Resources\MeshManager.hpp" />
+    <ClInclude Include="Headers\Resources\PlayerTexture.hpp" />
     <ClInclude Include="Headers\Resources\ResourceLoader.hpp" />
     <ClInclude Include="Headers\Resources\ResourceManager.hpp" />
     <ClInclude Include="Headers\Resources\Shader.hpp" />

@@ -5,7 +5,7 @@
 #include "Core/App/App.hpp"
 #include "Core/Debug/Gizmo.hpp"
 
-Entities::ClientPlayerEntity::ClientPlayerEntity()
+Entities::ClientPlayerEntity::ClientPlayerEntity(const char* name, bool isSlim) : PlayerEntity(name, isSlim)
 {
 	Bindings = Core::App::App::GetInputBindings();
 	camera = Core::App::App::GetMainCamera();

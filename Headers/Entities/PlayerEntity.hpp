@@ -3,6 +3,7 @@
 #include "EntityLivingBase.hpp"
 #include "Resources/ShaderProgram.hpp"
 #include "Model/ArmPose.hpp"
+#include "Resources/PlayerTexture.hpp"
 
 namespace Entities
 {
@@ -10,7 +11,7 @@ namespace Entities
 	{
 	public:
 
-		PlayerEntity(const char* name = "");
+		PlayerEntity(const char* name = "", bool isSlim = false);
 
 		virtual void Update(float deltatime) override;
 		virtual void DamageEntity(float Amount) override;
@@ -35,6 +36,8 @@ namespace Entities
 
 		ArmPose rightArmPose = ArmPose::ITEM;
 		ArmPose leftArmPose = ArmPose::EMPTY;
+
+		Resources::PlayerTexture* texture = nullptr;
 
 		bool leftHanded = false;
 		bool crouching = false;

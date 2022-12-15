@@ -98,10 +98,16 @@ void TextureManager::ClearShadowMaps(ResourceManager* manager)
 
 void Resources::TextureManager::LoadAtlas(Resources::TextureAtlas& atlas)
 {
-	std::string path = "Resources/textures/";
+	std::string pathB = "Resources/textures/block/";
+	std::string pathI = "Resources/textures/item/";
 	std::vector<std::string> files;
 	std::vector<std::string> exts;
-	for (const auto& entry : fs::recursive_directory_iterator(path))
+	for (const auto& entry : fs::recursive_directory_iterator(pathB))
+	{
+		files.push_back(entry.path().generic_string());
+		exts.push_back(entry.path().extension().generic_string());
+	}
+	for (const auto& entry : fs::recursive_directory_iterator(pathI))
 	{
 		files.push_back(entry.path().generic_string());
 		exts.push_back(entry.path().extension().generic_string());
@@ -121,7 +127,7 @@ void Resources::TextureManager::LoadAtlas(Resources::TextureAtlas& atlas)
         }
         else
         {
-            LOG("%s:%s", files[i].c_str(), exts[i].c_str());
+            //LOG("%s:%s", files[i].c_str(), exts[i].c_str());
         }
     }
 	Core::Maths::IVec2 size = Core::Maths::IVec2(16, 16);
@@ -141,4 +147,34 @@ void Resources::TextureManager::LoadAtlas(Resources::TextureAtlas& atlas)
 			}
 	}
 	for (size_t i = 0; i < textures.size(); i++) Resources::Texture::FreeImage(textures.at(i));
+	//Texture::Save("atlas", (unsigned char*)atlas.GetData(), atlas.GetTextureResolution().x, atlas.GetTextureResolution().y);
+}
+
+void Resources::TextureManager::LoadTextures(ResourceManager* manager)
+{
+	std::string path = "Resources/textures/entity/";
+	std::vector<std::string> files;
+	std::vector<std::string> exts;
+	for (const auto& entry : fs::recursive_directory_iterator(path))
+	{
+		files.push_back(entry.path().generic_string());
+		exts.push_back(entry.path().extension().generic_string());
+	}
+	for (size_t i = 0; i < files.size(); i++)
+	{
+		if (!exts[i].c_str()[0]) continue;
+		else if (!exts[i].compare(".png") || !exts[i].compare(".jpg"))
+		{
+			Texture* tex = manager->Create<Texture>(files[i].c_str(), false);
+			if (tex)
+			{
+				textures.push_back(tex);
+				manager->PushResourceToLoader(tex, files[i].c_str());
+			}
+			else
+			{
+				LOG("Very scary: %s", files[i].c_str());
+			}
+		}
+	}
 }

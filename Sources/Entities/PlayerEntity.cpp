@@ -3,14 +3,19 @@
 #include "Core/Debug/Log.hpp"
 #include "Core/App/App.hpp"
 
-Entities::PlayerEntity::PlayerEntity(const char* name)
+Entities::PlayerEntity::PlayerEntity(const char* name, bool isSlim)
 {
     if (!name || name[0] == 0)
     {
         uuid = Core::App::App::GetRNG().nextLong();
+        model.SetTexture(manager->Get<Resources::Texture>("Resources/textures/entity/steve.png"));
     }
     else
     {
+        std::string texPath = "PlayerTextures/";
+        texPath = texPath.append(name);
+        texture = manager->Create<Resources::PlayerTexture>(texPath.c_str(), false);
+        manager->PushResourceToLoader(texture, texPath.c_str());
         // TODO
     }
     OnGround = true;
@@ -23,20 +28,35 @@ Entities::PlayerEntity::PlayerEntity(const char* name)
 	head = model.AddOrReplacePart("head", (new Model::BodyPart())->addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F)->texOffs(0, 0));
 	hat = model.AddOrReplacePart("hat", (new Model::BodyPart())->addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F)->extend(0.5f)->texOffs(32, 0));
 	body = model.AddOrReplacePart("body", (new Model::BodyPart())->addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F)->texOffs(16, 16));
-	rightArm = model.AddOrReplacePart("right_arm", (new Model::BodyPart())->addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F)->texOffs(40, 16));
 	rightLeg = model.AddOrReplacePart("right_leg", (new Model::BodyPart())->addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F)->texOffs(0, 16));
 	cloak = model.AddOrReplacePart("cloak", (new Model::BodyPart())->addBox(-5.0F, 0.0F, -1.0F, 10.0F, 16.0F, 1.0F)->texOffs(0, 0));
-	leftArm = model.AddOrReplacePart("left_arm", (new Model::BodyPart())->addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F)->texOffs(32, 48));
-	leftSleeve = model.AddOrReplacePart("left_sleeve", (new Model::BodyPart())->addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F)->texOffs(48, 48)->extend(0.25F));
-	rightSleeve = model.AddOrReplacePart("right_sleeve", (new Model::BodyPart())->addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F)->texOffs(40, 32)->extend(0.25F));
+    if (isSlim)
+    {
+        rightArm = model.AddOrReplacePart("right_arm", (new Model::BodyPart())->addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F)->texOffs(40, 16));
+        leftArm = model.AddOrReplacePart("left_arm", (new Model::BodyPart())->addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F)->texOffs(32, 48));
+        leftSleeve = model.AddOrReplacePart("left_sleeve", (new Model::BodyPart())->addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F)->texOffs(48, 48)->extend(0.25F));
+        rightSleeve = model.AddOrReplacePart("right_sleeve", (new Model::BodyPart())->addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F)->texOffs(40, 32)->extend(0.25F));
+        rightArm->offset = Core::Maths::Vec3(-5.0F, 2.5F, 0.0F);
+        leftArm->offset = Core::Maths::Vec3(5.0F, 2.5F, 0.0F);
+        leftSleeve->offset = Core::Maths::Vec3(5.0F, 2.5F, 0.0F);
+        rightSleeve->offset = Core::Maths::Vec3(-5.0F, 2.5F, 0.0F);
+        
+    }
+    else
+    {
+        rightArm = model.AddOrReplacePart("right_arm", (new Model::BodyPart())->addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F)->texOffs(40, 16));
+        leftArm = model.AddOrReplacePart("left_arm", (new Model::BodyPart())->addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F)->texOffs(32, 48));
+        leftSleeve = model.AddOrReplacePart("left_sleeve", (new Model::BodyPart())->addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F)->texOffs(48, 48)->extend(0.25F));
+        rightSleeve = model.AddOrReplacePart("right_sleeve", (new Model::BodyPart())->addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F)->texOffs(40, 32)->extend(0.25F));
+        rightArm->offset = Core::Maths::Vec3(-5.0F, 2.0F, 0.0F);
+        leftArm->offset = Core::Maths::Vec3(5.0F, 2.0F, 0.0F);
+        rightSleeve->offset = Core::Maths::Vec3(-5.0F, 2.0F, 0.0F);
+        leftSleeve->offset = Core::Maths::Vec3(5.0F, 2.0F, 0.0F);
+    }
 	leftLeg = model.AddOrReplacePart("left_leg", (new Model::BodyPart())->addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F)->texOffs(16, 48));
 	leftPants = model.AddOrReplacePart("left_pants", (new Model::BodyPart())->addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F)->texOffs(0, 48)->extend(0.25F));
 	rightPants = model.AddOrReplacePart("right_pants", (new Model::BodyPart())->addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F)->texOffs(0, 32)->extend(0.25F));
 	jacket = model.AddOrReplacePart("jacket", (new Model::BodyPart())->addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F)->texOffs(16, 32)->extend(0.25F));
-	rightArm->offset = Core::Maths::Vec3(-5.0F, 2.0F, 0.0F);
-	leftArm->offset = Core::Maths::Vec3(5.0F, 2.0F, 0.0F);
-	rightSleeve->offset = Core::Maths::Vec3(-5.0F, 2.0F, 0.0F);
-	leftSleeve->offset = Core::Maths::Vec3(5.0F, 2.0F, 0.0F);
 	rightLeg->offset = Core::Maths::Vec3(-1.9F, 12.0F, 0.0F);
 	leftLeg->offset = Core::Maths::Vec3(1.9F, 12.0F, 0.0F);
 	leftPants->offset = Core::Maths::Vec3(1.9F, 12.0F, 0.0F);

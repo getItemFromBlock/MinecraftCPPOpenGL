@@ -21,7 +21,7 @@ namespace Entities
 	{
 	public:
 
-		ClientPlayerEntity();
+		ClientPlayerEntity(const char* name = "", bool isSlim = false);
 
 		virtual void Update(float deltatime) override;
 		virtual void DamageEntity(float Amount) override;

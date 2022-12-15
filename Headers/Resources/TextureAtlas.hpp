@@ -27,6 +27,8 @@ namespace Resources
 		Core::Maths::Vec2 GetTexture(std::string name);
 		Core::Maths::Vec2 GetTextureSize();
 
+		Core::Maths::IVec2 GetTextureResolution();
+
 	private:
 		Core::Maths::IVec2 size;
 		unsigned int Tex_ID = 0;

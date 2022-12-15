@@ -25,7 +25,9 @@ size_t Resources::MaterialManager::CreateMaterial(ResourceManager* manager, cons
 	}
 	else
 	{
-		mat = manager->Create<Material>(path);
+		mat = new Material();
+		mat->SetPath(path);
+		//manager->Create<Material>(path);
 	}
 	materials.push_back(mat);
 	return materials.size() - 1llu;
@@ -42,6 +44,15 @@ size_t Resources::MaterialManager::AddMaterial(Material* in)
 	}
 	materials.push_back(in);
 	return materials.size() - 1;
+}
+
+void Resources::MaterialManager::ClearMaterials()
+{
+	for (size_t i = 0; i < materials.size(); i++)
+	{
+		delete materials[i];
+	}
+	materials.clear();
 }
 
 std::vector<Resources::Material*> Resources::MaterialManager::GetMaterials()

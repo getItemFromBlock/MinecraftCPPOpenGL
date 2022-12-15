@@ -2,21 +2,6 @@
 
 #include "Resources/Texture.hpp"
 
-enum class TextureFilterType : unsigned int
-{
-    Nearest,
-    Linear,
-};
-
-enum class TextureWrapType : unsigned int
-{
-    Repeat,
-    MirroredRepeat,
-    MirroredClamp,
-    ClampToEdge,
-    ClampToBorder,
-};
-
 namespace LowRenderer::Rendering
 {
     class FrameBuffer : public Resources::Texture

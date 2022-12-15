@@ -5,19 +5,53 @@
 
 char Resources::Material::searchText[64] = "";
 Resources::Texture* Resources::Material::selectedTexture = nullptr;
+Resources::Texture* Resources::Material::debugTexture = nullptr;
+Resources::Texture* Resources::Material::debugNormal = nullptr;
+
+static const char* const WrapTableDesc[] =
+{
+    "Repeat",
+    "Mirrored Repeat",
+    "Mirrored Clamp",
+    "Clamp to Edge",
+    "Clamp to Border",
+};
+static const char* const FilterTableDesc[] =
+{
+    "Nearest",
+    "Linear",
+};
 
 Resources::Material::Material()
 {
 }
 
-void Resources::Material::Load(const char* name)
+Resources::Material::Material(const Material& other)
 {
-    fullPath = name;
+    name = other.name;
+    fullPath = other.fullPath;
+    texture = other.texture;
+    normalMap = other.normalMap;
+    tmpNTexturePath = other.tmpNTexturePath;
+    tmpTexturePath = other.tmpTexturePath;
+    AmbientColor = other.AmbientColor;
+    DiffuseColor = other.DiffuseColor;
+    SpecularColor = other.SpecularColor;
+    EmissiveColor = other.EmissiveColor;
+    Alpha = other.Alpha;
+    Smoothness = other.Smoothness;
+    Shininess = other.Shininess;
+    Absorbtion = other.Absorbtion;
+}
+
+void Resources::Material::SetPath(const char* nameIn)
+{
+    fullPath = nameIn;
     int startIndex = 0;
     char tmp;
     for (int i = 0; i < 255; i++)
     {
-        tmp = name[i];
+        tmp = nameIn[i];
         if (tmp == 0)
         {
             break;
@@ -27,59 +61,63 @@ void Resources::Material::Load(const char* name)
             startIndex = i + 1;
         }
     }
-    tmp = name[startIndex];
-    int index = 0;
+    tmp = nameIn[startIndex];
     bool ext = false;
     for (int i = startIndex + 1; i < 255 && tmp != 0; i++)
     {
         if (tmp == '.') ext = true;
         if (!ext)
         {
-            Name[index] = tmp;
-            index++;
+            name.push_back(tmp);
         }
         else if (tmp == ':')
         {
             ext = false;
-            Name[index] = tmp;
-            index++;
+            name.push_back(tmp);
         }
-        tmp = name[i];
+        tmp = nameIn[i];
     }
-    Name[index] = 0;
-}
-
-void Resources::Material::UnLoad()
-{
-    if (!fullPath.empty())
-        this->~Material();
 }
 
 void Resources::Material::Update(Resources::ResourceManager* manager)
 {
-    if (tmpTexturePath.c_str()[0])
+    if (tmpTexturePath.c_str()[0] || tmpNTexturePath.c_str()[0])
     {
         deltaF++;
-        Texture* tmp = manager->Get<Texture>(tmpTexturePath.c_str());
-        if (tmp)
+        if (tmpTexturePath.c_str()[0])
         {
-            texture = tmp;
-            tmpTexturePath = "";
-        }
-        else
-        {
-            if (deltaF > 8)
+            Texture* tmp = manager->Get<Texture>(tmpTexturePath.c_str());
+            if (tmp)
             {
-                LOG("Warning, could not find texture %s", tmpTexturePath.c_str());
+                texture = tmp;
                 tmpTexturePath = "";
+            }
+            else if (deltaF > 8)
+            {
+                LOG("Could not find texture %s", tmpTexturePath.c_str());
+                tmpTexturePath = "";
+            }
+        }
+        if (tmpNTexturePath.c_str()[0])
+        {
+            Texture* tmp = manager->Get<Texture>(tmpNTexturePath.c_str());
+            if (tmp)
+            {
+                normalMap = tmp;
+                tmpNTexturePath = "";
+            }
+            else if (deltaF > 8)
+            {
+                LOG("Could not find normal map %s", tmpNTexturePath.c_str());
+                tmpNTexturePath = "";
             }
         }
     }
 }
 
-const char* Resources::Material::GetPath()
+const std::string& Resources::Material::GetPath() const
 {
-    return fullPath.c_str();
+    return fullPath;
 }
 
 Resources::Material::~Material()
@@ -88,14 +126,13 @@ Resources::Material::~Material()
 
 const char* Resources::Material::GetName()
 {
-	return Name;
+    return name.c_str();
 }
 
-void Resources::Material::SetTexture(Resources::ResourceManager* manager, Resources::TextureManager* textures, const char* path, bool raw)
+void Resources::Material::SetTexture(const char* path)
 {
-    manager->SetPathAutoAppend(raw);
-    size_t index = textures->CreateTexture(manager, path);
-    texture = textures->GetTextures().at(index);
+    //tmpTexturePath.append("Resources/");
+    tmpTexturePath.append(path);
 }
 
 void Resources::Material::SetTexture(Resources::Texture* tex)
@@ -103,16 +140,29 @@ void Resources::Material::SetTexture(Resources::Texture* tex)
     texture = tex;
 }
 
-void Resources::Material::SetNormalMap(Resources::ResourceManager* manager, Resources::TextureManager* textures, const char* path, bool raw)
+void Resources::Material::SetNormalMap(const char* path)
 {
-    manager->SetPathAutoAppend(raw);
-    size_t index = textures->CreateTexture(manager, path);
-    normalMap = textures->GetTextures().at(index);
+    //tmpNTexturePath.append("Resources/");
+    tmpNTexturePath.append(path);
 }
 
 void Resources::Material::SetNormalMap(Resources::Texture* tex)
 {
     normalMap = tex;
+}
+
+Resources::Texture* Resources::Material::GetTexture() const
+{
+    if (!texture) return nullptr;
+    else if (!texture->IsLoaded()) return debugTexture;
+    return texture;
+}
+
+Resources::Texture* Resources::Material::GetNormalMap() const
+{
+    if (!normalMap) return nullptr;
+    else if (!normalMap->IsLoaded()) return debugNormal;
+    return normalMap;
 }
 
 void Resources::Material::RenderGUI(Resources::TextureManager* textureManager)
@@ -135,6 +185,7 @@ void Resources::Material::RenderGUI(Resources::TextureManager* textureManager)
     if (Shininess < 0.0f) Shininess = 0.0f;
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 45);
     ImGui::DragFloat("Absorbtion", &Absorbtion, 0.05f, 0.0f, 1.0f, "%.3f");
+
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 45);
     if (texture)
     {
@@ -274,8 +325,8 @@ void Resources::Material::Deserialize(Resources::ResourceManager* resources, con
             normalMap = resources->Get<Texture>(path.c_str());
             if (!normalMap)
             {
-                texture = resources->Get<Texture>("DefaultResources/Textures/normal.png");
-                LOG("Warning, could not find normal map %s", path.c_str());
+                tmpNTexturePath = path;
+                normalMap = resources->Get<Texture>("DefaultResources/Textures/normal.png");
             }
         }
         pos = Text::endLine(data, pos, size);
@@ -287,13 +338,13 @@ void Resources::Material::Serialize(std::ofstream& fileOut, unsigned int rec)
 {
     Parsing::Shift(fileOut, rec);
     fileOut << "NewMaterial " << fullPath << std::endl;
-    Parsing::Shift(fileOut, rec+1);
+    Parsing::Shift(fileOut, rec + 1);
     fileOut << "AmbientColor " << AmbientColor.x << " " << AmbientColor.y << " " << AmbientColor.z << std::endl;
-    Parsing::Shift(fileOut, rec+1);
+    Parsing::Shift(fileOut, rec + 1);
     fileOut << "DiffuseColor " << DiffuseColor.x << " " << DiffuseColor.y << " " << DiffuseColor.z << std::endl;
-    Parsing::Shift(fileOut, rec+1);
+    Parsing::Shift(fileOut, rec + 1);
     fileOut << "SpecularColor " << SpecularColor.x << " " << SpecularColor.y << " " << SpecularColor.z << std::endl;
-    Parsing::Shift(fileOut, rec+1);
+    Parsing::Shift(fileOut, rec + 1);
     fileOut << "EmissiveColor " << EmissiveColor.x << " " << EmissiveColor.y << " " << EmissiveColor.z << std::endl;
     Parsing::Shift(fileOut, rec + 1);
     fileOut << "Alpha " << Alpha << std::endl;
@@ -363,15 +414,20 @@ void Resources::Material::SetSearchData(Texture* searchIndex)
     searchText[0] = 0;
 }
 
+void Resources::Material::SetDebugTexture(Texture* tex, Texture* nrm)
+{
+    debugTexture = tex;
+    debugNormal = nrm;
+}
+
 Resources::Material& Resources::Material::operator=(const Resources::Material& other)
 {
     if (this == &other)
         return *this;
-    for (unsigned int i = 0; i < 256; i++)
-    {
-        Name[i] = other.Name[i];
-    }
+    name = other.name;
     fullPath = other.fullPath;
+    tmpNTexturePath = other.tmpNTexturePath;
+    tmpTexturePath = other.tmpTexturePath;
     texture = other.texture;
     normalMap = other.normalMap;
     AmbientColor = other.AmbientColor;

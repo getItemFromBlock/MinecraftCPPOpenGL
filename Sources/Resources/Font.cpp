@@ -18,13 +18,14 @@ void Resources::Font::Load(const char* path)
 
 void Resources::Font::UnLoad()
 {
+	DeleteData();
 	Texture::UnLoad();
 	this->~Font();
 }
 
 void Resources::Font::GenerateSpacings()
 {
-	if (!loaded) return;
+	if (!loaded.Load()) return;
 	Core::Maths::IVec2 TileSize = Core::Maths::IVec2(sizeX / 16, sizeY / 16);
 	for (int i = 0; i < 256; i++)
 	{

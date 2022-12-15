@@ -14,6 +14,7 @@ namespace Resources
 		~MaterialManager();
 		size_t CreateMaterial(ResourceManager* manager, const char* path);
 		size_t AddMaterial(Material* in);
+		void ClearMaterials();
 		std::vector<Material*> GetMaterials();
 		std::vector<Material*> GetMaterials(const char* filter);
 	private:

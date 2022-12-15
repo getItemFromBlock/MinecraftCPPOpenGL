@@ -29,7 +29,7 @@ World::World::World(double initTime, Resources::MeshManager* meshes, Resources::
 	GenerateChunk(Core::Maths::IVec3(-1, 0, 0));
 	GenerateChunk(Core::Maths::IVec3(0, 0, -1));
 	GenerateChunk(Core::Maths::IVec3(-1, 0, -1));
-	player = new Entities::ClientPlayerEntity();
+	player = new Entities::ClientPlayerEntity("getItemFromBlock");
 	player->Position = Core::Maths::Vec3(0.5f, static_cast<int>(generator.wFunc(0, 0)) + 1.0f, 0.5f);
 	Entities::PlayerEntity* player2 = new Entities::PlayerEntity();
 	player2->Position = player->Position;
@@ -213,7 +213,6 @@ void World::World::RenderWorld(unsigned int& VAOCurrent, Resources::ShaderProgra
 		if (Core::Maths::Vec3((chunk->second->getWorldPos() * 16) - player->Position).getLength() < 64)
 			chunk->second->Render(*shaderProgram, VAOCurrent, shadowMatrix, true);
 	}
-	glUniform1i(MainShader->GetLocation(Resources::ShaderData::Texture), 1);
 	for (auto e = entities.begin(); e != entities.end(); e++)
 	{
 		e->second->Render(this, *shaderProgram, VAOCurrent, shadowMatrix, true);
@@ -258,7 +257,6 @@ void World::World::RenderWorld(unsigned int& VAOCurrent, Resources::ShaderProgra
 			}
 		}
 	}
-	glUniform1i(MainShader->GetLocation(Resources::ShaderData::Texture), 1);
 	for (auto e = entities.begin(); e != entities.end(); e++)
 	{
 		e->second->Render(this, *shaderProgram, VAOCurrent, vp, false);

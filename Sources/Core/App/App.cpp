@@ -106,7 +106,6 @@ namespace Core::App
 		InputBindings[static_cast<unsigned int>(InputType::Swap)] = ImGuiKey_F;
 		InputBindings[static_cast<unsigned int>(InputType::Inventory)] = ImGuiKey_E;
 		InputBindings[static_cast<unsigned int>(InputType::View)] = ImGuiKey_F5;
-		res = Resources::ResourceManager();
 		Resources::Texture::SetFilterType(GL_NEAREST);
 		res.SetPathAutoAppend(true);
 		textures.CreateTexture(&res, "DefaultResources/Textures/debug.png", GL_NEAREST);
@@ -168,10 +167,12 @@ namespace Core::App
 	unsigned int shadowMapID = 0;
 	void App::Update()
 	{
+		Entities::Entity::SetResourceManager(&res);
 		Resources::ShaderProgram* MainShader = shaders.GetShaderProgram("default shader");
 		Resources::ShaderProgram* LitShader = shaders.GetShaderProgram("lit shader");
 		Resources::TextureAtlas atlas = Resources::TextureAtlas(Core::Maths::IVec2(1024, 1024));
 		textures.LoadAtlas(atlas);
+		textures.LoadTextures(&res);
 		Blocks::BlockRegister::RegisterBlocks(&atlas);
 		//Resources::Texture::SaveImage("atlas", (unsigned char*)atlas.GetData(), 1024, 1024);
 		atlas.Load();
@@ -187,6 +188,7 @@ namespace Core::App
 		shadowMapID = world->shadowMap.GetTextureID();
 		while (!glfwWindowShouldClose(window))
 		{
+			res.Update();
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
@@ -287,8 +289,10 @@ namespace Core::App
 	{
 		// TODO destroy world
 		meshes.ClearModels();
+		materials.ClearMaterials();
 		frameGraph.Destroy();
 		shaders.DestroyShaderPrograms();
+		res.Terminate();
 		res.ClearResources();
 
 		ImGui_ImplGlfw_Shutdown();

@@ -42,6 +42,7 @@ namespace Resources
 		std::vector<Texture*> GetTextures();
 		std::vector<Texture*> GetTextures(const char* filter);
 		void LoadAtlas(Resources::TextureAtlas& atlas);
+		void LoadTextures(ResourceManager* manager);
 	private:
 		std::vector<Texture*> textures;
 		std::vector<LowRenderer::Lightning::ShadowMapBuffer*> shadowMaps;

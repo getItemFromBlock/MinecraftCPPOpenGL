@@ -4,6 +4,7 @@
 
 #include "BodyPart.hpp"
 #include "Resources/ShaderProgram.hpp"
+#include "Resources/Texture.hpp"
 
 namespace World
 {
@@ -25,7 +26,8 @@ namespace Entities::Model
 		void DeleteModel();
 		void Bake();
 		void Render(Core::Maths::Vec3 position, float rotation, World::World* worldIn, Resources::ShaderProgram* shaderProgram, unsigned int& VAOCurrent, const Core::Maths::Mat4& vp);
+		void SetTexture(Resources::Texture* tex);
 	private:
-		unsigned int texture = 1;
+		Resources::Texture* texture = nullptr;
 	};
 }

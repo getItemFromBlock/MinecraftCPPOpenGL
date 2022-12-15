@@ -510,8 +510,8 @@ void Core::Util::ModelLoader::ParseMTL(const char* path, Core::Util::LoaderData*
 	{
 		if (Text::compareWord(data, pos, size, "newmtl "))
 		{
-			Resources::Texture::SetFilterType(GL_LINEAR);
-			Resources::Texture::SetWrapType(GL_REPEAT);
+			//Resources::Texture::SetFilterType(GL_LINEAR);
+			//Resources::Texture::SetWrapType(GL_REPEAT);
 			pos = Text::skipCharSafe(data, pos, size);
 			std::string path2 = path;
 			std::string name = Text::getText(data, pos, size);
@@ -586,23 +586,23 @@ void Core::Util::ModelLoader::ParseMTL(const char* path, Core::Util::LoaderData*
 		}
 		else if (Text::compareWord(data, pos, size, "map_Kd_Nearest"))
 		{
-			Resources::Texture::SetFilterType(GL_NEAREST);
+			//Resources::Texture::SetFilterType(GL_NEAREST);
 		}
 		else if (Text::compareWord(data, pos, size, "map_Kd_Edge"))
 		{
-			Resources::Texture::SetWrapType(GL_CLAMP_TO_EDGE);
+			//Resources::Texture::SetWrapType(GL_CLAMP_TO_EDGE);
 		}
 		else if (Text::compareWord(data, pos, size, "map_Ka ") || Text::compareWord(data, pos, size, "map_Kd "))
 		{
 			pos = Text::skipCharSafe(data, pos, size);
 			std::string texPath = Text::getText(data, pos, size);
-			args->mats->at(matIndex)->SetTexture(args->manager, args->textureManager, texPath.c_str(), true);
+			args->mats->at(matIndex)->SetTexture(texPath.c_str());
 		}
 		else if (Text::compareWord(data, pos, size, "map_Kn "))
 		{
 			pos = Text::skipCharSafe(data, pos, size);
 			std::string texPath = Text::getText(data, pos, size);
-			args->mats->at(matIndex)->SetNormalMap(args->manager, args->textureManager, texPath.c_str(), true);
+			args->mats->at(matIndex)->SetNormalMap(texPath.c_str());
 		}
 		pos = Text::endLine(data, pos, size);
 	}

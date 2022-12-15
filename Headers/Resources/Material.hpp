@@ -1,15 +1,22 @@
 #pragma once
 
-#include "Resources/IResource.hpp"
+#include <string>
+
 #include "Core/DataStructure/INameable.hpp"
 #include "Core/Maths/Maths.hpp"
 #include "Resources/Texture.hpp"
 #include "Resources/ResourceManager.hpp"
 #include "Resources/TextureManager.hpp"
 
+namespace LowRenderer
+{
+	class Model;
+	class SkinnedModel;
+}
+
 namespace Resources
 {
-	class Material : public IResource, public Core::DataStructure::INameable
+	class Material : public Core::DataStructure::INameable
 	{
 	public:
 		Core::Maths::Vec3 AmbientColor = Core::Maths::Vec3(1);	// Ka parameter in OBJ
@@ -22,33 +29,40 @@ namespace Resources
 		float Absorbtion = 1.0f;
 
 		Material();
+		Material(const Material& other);
 		~Material();
-		void Load(const char* path) override;
-		void UnLoad() override;
+		void SetPath(const char* path);
 		void Update(ResourceManager* manager);
-		const char* GetPath() override;
+		const std::string& GetPath() const;
 		const char* GetName() override;
-		void SetTexture(ResourceManager* manager, TextureManager* textures, const char* path, bool raw = false);
+		void SetTexture(const char* path);
 		void SetTexture(Texture* tex);
-		void SetNormalMap(ResourceManager* manager, TextureManager* textures, const char* path, bool raw = false);
+		void SetNormalMap(const char* path);
 		void SetNormalMap(Texture* tex);
-		Texture* GetTexture() { return texture; }
-		Texture* GetNormalMap() { return normalMap; }
+		Texture* GetTexture() const;
+		Texture* GetNormalMap() const;
 		void RenderGUI(TextureManager* textureManager);
 		void Deserialize(ResourceManager* resources, const char* data, int64_t& pos, int64_t size, int64_t& line, std::string& err);
 		void Serialize(std::ofstream& fileOut, unsigned int rec);
 		void TexturePopUp(TextureManager* textureManager, bool normal);
 		void SetSearchData(Texture* searchIndex);
+		static void SetDebugTexture(Texture* tex, Texture* nrm);
 
 		Material& operator=(const Material& other);
 	private:
 		char deltaF = 0;
-		char Name[256] = "";
-		std::string fullPath = "";
+		std::string name;
+		std::string fullPath;
 		std::string tmpTexturePath = "";
-		Texture* texture; // map_Kd or map_Ka parameter (if present in file)
-		Texture* normalMap; // map_Kn (if present in file AND # GenerateTangent is present in file header AND tangent shader is used)
+		std::string tmpNTexturePath = "";
+		Texture* texture = nullptr; // map_Kd or map_Ka parameter (if present in file)
+		Texture* normalMap = nullptr; // map_Kn (if present in file AND # GenerateTangent is present in file header AND tangent shader is used)
 		static char searchText[64];
 		static Texture* selectedTexture;
+		static Texture* debugTexture;
+		static Texture* debugNormal;
+
+		friend class LowRenderer::Model;
+		friend class LowRenderer::SkinnedModel;
 	};
 }
