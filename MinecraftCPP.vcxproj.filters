@@ -258,6 +258,9 @@
     <ClCompile Include="Sources\Resources\PlayerTexture.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Entities\PigEntity.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Core\App\App.hpp">

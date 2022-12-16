@@ -2,6 +2,31 @@
 
 #include "EntityLivingBase.hpp"
 #include "Resources/ShaderProgram.hpp"
+#include "Model/ArmPose.hpp"
+#include "Resources/PlayerTexture.hpp"
+
+namespace Entities
+{
+    class PigEntity : public EntityLivingBase
+    {
+    public:
+
+        PigEntity();
+
+        virtual void Update(float deltatime) override;
+        virtual void SetupAnim(float deltaTime, float globalTime) override;
+    protected:
+        Model::BodyPart* head;
+        Model::BodyPart* body;
+        Model::BodyPart* rightHindLeg;
+        Model::BodyPart* leftHindLeg;
+        Model::BodyPart* rightFrontLeg;
+        Model::BodyPart* leftFrontLeg;
+        Resources::Texture* texture = nullptr;
+
+        virtual Vec3 getRidePosition(EntityLivingBase* entity) override;
+    };
+}
 
 /*
 

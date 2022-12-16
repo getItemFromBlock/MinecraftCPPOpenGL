@@ -27,6 +27,7 @@ namespace Entities
 		virtual void DamageEntity(float Amount) override;
 		virtual void OnDeath() override;
 		virtual void Render(World::World* worldIn, Resources::ShaderProgram* shaderProgram, unsigned int& VAOCurrent, const Core::Maths::Mat4& vp, bool IsShadowMap) override;
+		virtual void Jump() override;
 		void ClientUpdate(float deltatime, World::World* world);
 		BLOCK GetSelectedBlock();
 	protected:

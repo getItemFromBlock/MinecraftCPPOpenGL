@@ -165,11 +165,13 @@ void Resources::TextureManager::LoadTextures(ResourceManager* manager)
 		if (!exts[i].c_str()[0]) continue;
 		else if (!exts[i].compare(".png") || !exts[i].compare(".jpg"))
 		{
-			Texture* tex = manager->Create<Texture>(files[i].c_str(), false);
+			Texture* tex = manager->Create<Texture>(files[i].c_str(), true);
 			if (tex)
 			{
+				/*
 				textures.push_back(tex);
 				manager->PushResourceToLoader(tex, files[i].c_str());
+				*/
 			}
 			else
 			{

@@ -16,7 +16,7 @@ namespace Entities::Model
 		BodyPart* mirror();
 		BodyPart* addBox(float xo, float yo, float zo, float xs, float ys, float zs);
 		BodyPart* extend(float val);
-		void Bake();
+		void Bake(Vec2 textSize);
 		void Render(unsigned int& VAOCurrent);
 		void copyFrom(BodyPart* other);
 

@@ -36,9 +36,10 @@ void Entities::Model::EntityModel::DeleteModel()
 
 void EntityModel::Bake()
 {
+	Vec2 texSize = texture ? Vec2((float)texture->GetTextureWidth(), (float)texture->GetTextureHeight()) : Vec2(64, 64);
 	for (auto i = parts.begin(); i != parts.end(); i++)
 	{
-		i->second->Bake();
+		i->second->Bake(texSize);
 	}
 }
 

@@ -4,6 +4,7 @@
 
 #include "Core/App/App.hpp"
 #include "Core/Debug/Gizmo.hpp"
+#include "Entities/PigEntity.hpp"
 
 Entities::ClientPlayerEntity::ClientPlayerEntity(const char* name, bool isSlim) : PlayerEntity(name, isSlim)
 {
@@ -54,6 +55,22 @@ void Entities::ClientPlayerEntity::OnDeath()
 void Entities::ClientPlayerEntity::Render(World::World* worldIn, Resources::ShaderProgram* shaderProgram, unsigned int& VAOCurrent, const Core::Maths::Mat4& vp, bool IsShadowMap)
 {
 	if (IsShadowMap ||viewMode != CameraViewMode::DEFAULT) PlayerEntity::Render(worldIn, shaderProgram, VAOCurrent, vp, IsShadowMap);
+}
+
+void Entities::ClientPlayerEntity::Jump()
+{
+	if (riding && ridingEntity && ridingEntity->OnGround)
+	{
+		Entities::PigEntity* pig = dynamic_cast<Entities::PigEntity*>(ridingEntity);
+		if (pig)
+		{
+			pig->Jump();
+		}
+	}
+	else
+	{
+		EntityLivingBase::Jump();
+	}
 }
 
 void Entities::ClientPlayerEntity::ClientUpdate(float deltatime, World::World* world)
@@ -107,6 +124,24 @@ void Entities::ClientPlayerEntity::ClientUpdate(float deltatime, World::World* w
 				riding = true;
 				ridingEntity = eResult.target;
 				//eResult.target->Jump();
+			}
+		}
+	}
+	if (riding)
+	{
+		if (crouching)
+		{
+			riding = false;
+			ridingEntity = nullptr;
+		}
+		else if (ridingEntity)
+		{
+			Entities::PigEntity* pig = dynamic_cast<Entities::PigEntity*>(ridingEntity);
+			if (pig)
+			{
+				pig->MovementOut = MovementOut;
+				pig->Rotation = Rotation;
+				pig->ViewRotation.y = ViewRotation.y;
 			}
 		}
 	}

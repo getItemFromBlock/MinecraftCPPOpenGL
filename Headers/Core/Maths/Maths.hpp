@@ -91,6 +91,8 @@ namespace Core::Maths
         // Return the result of the aritmetic division of 'a' and 'b', will return 'a' * VEC2D_HIGH_VALUE if 'b' is equal 0;
         inline Vec2 operator/(const float& b) const;
 
+        inline Vec2 operator/(const Vec2& b) const;
+
         inline bool operator==(const Vec2& b) const;
 
         inline const float& operator[](const size_t a) const;

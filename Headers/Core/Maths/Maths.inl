@@ -102,6 +102,13 @@ namespace Core::Maths
         return res;
     }
 
+    inline Vec2 Vec2::operator/(const Vec2& other) const
+    {
+        if (other.x == 0.0f || other.y == 0.0f)
+            return operator*(VEC_HIGH_VALUE);
+        return Vec2(x/other.x, y/other.y);
+    }
+
     inline bool Vec2::operator==(const Vec2& b) const
     {
         return (x == b.x && y == b.y);

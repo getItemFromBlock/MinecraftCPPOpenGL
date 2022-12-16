@@ -46,7 +46,7 @@ BodyPart* Entities::Model::BodyPart::extend(float val)
 	return this;
 }
 
-void BodyPart::Bake()
+void BodyPart::Bake(Vec2 textSize)
 {
 	std::vector<CubeModelVertice> vertices;
 	std::vector<unsigned int> indices;
@@ -75,67 +75,67 @@ void BodyPart::Bake()
 		};
 		if (model.mirrored)
 		{
-			vertices.push_back(CubeModelVertice(ps[0], ns[0], (Vec2(model.size.z + model.size.x, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[1], ns[0], (Vec2(model.size.z + model.size.x, model.size.z + model.size.y) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[2], ns[0], (Vec2(2 * model.size.z + model.size.x, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[3], ns[0], (Vec2(2 * model.size.z + model.size.x, model.size.z + model.size.y) + model.texOffset) / 64.0f));
+			vertices.push_back(CubeModelVertice(ps[0], ns[0], (Vec2(model.size.z + model.size.x, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[1], ns[0], (Vec2(model.size.z + model.size.x, model.size.z + model.size.y) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[2], ns[0], (Vec2(2 * model.size.z + model.size.x, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[3], ns[0], (Vec2(2 * model.size.z + model.size.x, model.size.z + model.size.y) + model.texOffset) / textSize));
 
-			vertices.push_back(CubeModelVertice(ps[6], ns[1], (Vec2(model.size.z, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[7], ns[1], (Vec2(model.size.z, model.size.z + model.size.y) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[4], ns[1], (Vec2(0, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[5], ns[1], (Vec2(0, model.size.z + model.size.y) + model.texOffset) / 64.0f));
+			vertices.push_back(CubeModelVertice(ps[6], ns[1], (Vec2(model.size.z, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[7], ns[1], (Vec2(model.size.z, model.size.z + model.size.y) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[4], ns[1], (Vec2(0, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[5], ns[1], (Vec2(0, model.size.z + model.size.y) + model.texOffset) / textSize));
 
-			vertices.push_back(CubeModelVertice(ps[4], ns[2], (Vec2(model.size.z + model.size.x, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[0], ns[2], (Vec2(model.size.z, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[6], ns[2], (Vec2(model.size.z + model.size.x, 0) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[2], ns[2], (Vec2(model.size.z, 0) + model.texOffset) / 64.0f));
+			vertices.push_back(CubeModelVertice(ps[4], ns[2], (Vec2(model.size.z + model.size.x, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[0], ns[2], (Vec2(model.size.z, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[6], ns[2], (Vec2(model.size.z + model.size.x, 0) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[2], ns[2], (Vec2(model.size.z, 0) + model.texOffset) / textSize));
 
-			vertices.push_back(CubeModelVertice(ps[1], ns[3], (Vec2(model.size.z + model.size.x, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[5], ns[3], (Vec2(model.size.z + 2 * model.size.x, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[3], ns[3], (Vec2(model.size.z + model.size.x, 0) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[7], ns[3], (Vec2(model.size.z + 2 * model.size.x, 0) + model.texOffset) / 64.0f));
+			vertices.push_back(CubeModelVertice(ps[1], ns[3], (Vec2(model.size.z + model.size.x, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[5], ns[3], (Vec2(model.size.z + 2 * model.size.x, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[3], ns[3], (Vec2(model.size.z + model.size.x, 0) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[7], ns[3], (Vec2(model.size.z + 2 * model.size.x, 0) + model.texOffset) / textSize));
 
-			vertices.push_back(CubeModelVertice(ps[4], ns[4], (Vec2(2 * model.size.z + 2 * model.size.x, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[5], ns[4], (Vec2(2 * model.size.z + 2 * model.size.x, model.size.z + model.size.y) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[0], ns[4], (Vec2(2 * model.size.z + model.size.x, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[1], ns[4], (Vec2(2 * model.size.z + model.size.x, model.size.z + model.size.y) + model.texOffset) / 64.0f));
+			vertices.push_back(CubeModelVertice(ps[4], ns[4], (Vec2(2 * model.size.z + 2 * model.size.x, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[5], ns[4], (Vec2(2 * model.size.z + 2 * model.size.x, model.size.z + model.size.y) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[0], ns[4], (Vec2(2 * model.size.z + model.size.x, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[1], ns[4], (Vec2(2 * model.size.z + model.size.x, model.size.z + model.size.y) + model.texOffset) / textSize));
 
-			vertices.push_back(CubeModelVertice(ps[2], ns[5], (Vec2(model.size.z + model.size.x, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[3], ns[5], (Vec2(model.size.z + model.size.x, model.size.z + model.size.y) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[6], ns[5], (Vec2(model.size.z, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[7], ns[5], (Vec2(model.size.z, model.size.z + model.size.y) + model.texOffset) / 64.0f));
+			vertices.push_back(CubeModelVertice(ps[2], ns[5], (Vec2(model.size.z + model.size.x, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[3], ns[5], (Vec2(model.size.z + model.size.x, model.size.z + model.size.y) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[6], ns[5], (Vec2(model.size.z, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[7], ns[5], (Vec2(model.size.z, model.size.z + model.size.y) + model.texOffset) / textSize));
 		}
 		else
 		{
-			vertices.push_back(CubeModelVertice(ps[0], ns[0], (Vec2(0, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[1], ns[0], (Vec2(0, model.size.z + model.size.y) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[2], ns[0], (Vec2(model.size.z, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[3], ns[0], (Vec2(model.size.z, model.size.z + model.size.y) + model.texOffset) / 64.0f));
+			vertices.push_back(CubeModelVertice(ps[0], ns[0], (Vec2(0, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[1], ns[0], (Vec2(0, model.size.z + model.size.y) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[2], ns[0], (Vec2(model.size.z, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[3], ns[0], (Vec2(model.size.z, model.size.z + model.size.y) + model.texOffset) / textSize));
 
-			vertices.push_back(CubeModelVertice(ps[6], ns[1], (Vec2(model.size.z + model.size.x, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[7], ns[1], (Vec2(model.size.z + model.size.x, model.size.z + model.size.y) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[4], ns[1], (Vec2(2 * model.size.z + model.size.x, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[5], ns[1], (Vec2(2 * model.size.z + model.size.x, model.size.z + model.size.y) + model.texOffset) / 64.0f));
+			vertices.push_back(CubeModelVertice(ps[6], ns[1], (Vec2(model.size.z + model.size.x, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[7], ns[1], (Vec2(model.size.z + model.size.x, model.size.z + model.size.y) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[4], ns[1], (Vec2(2 * model.size.z + model.size.x, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[5], ns[1], (Vec2(2 * model.size.z + model.size.x, model.size.z + model.size.y) + model.texOffset) / textSize));
 
-			vertices.push_back(CubeModelVertice(ps[4], ns[2], (Vec2(model.size.z + model.size.x, 0) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[0], ns[2], (Vec2(model.size.z, 0) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[6], ns[2], (Vec2(model.size.z + model.size.x, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[2], ns[2], (Vec2(model.size.z, model.size.z) + model.texOffset) / 64.0f));
+			vertices.push_back(CubeModelVertice(ps[4], ns[2], (Vec2(model.size.z + model.size.x, 0) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[0], ns[2], (Vec2(model.size.z, 0) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[6], ns[2], (Vec2(model.size.z + model.size.x, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[2], ns[2], (Vec2(model.size.z, model.size.z) + model.texOffset) / textSize));
 
-			vertices.push_back(CubeModelVertice(ps[1], ns[3], (Vec2(model.size.z + model.size.x, 0) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[5], ns[3], (Vec2(model.size.z + 2 * model.size.x, 0) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[3], ns[3], (Vec2(model.size.z + model.size.x, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[7], ns[3], (Vec2(model.size.z + 2 * model.size.x, model.size.z) + model.texOffset) / 64.0f));
+			vertices.push_back(CubeModelVertice(ps[1], ns[3], (Vec2(model.size.z + model.size.x, 0) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[5], ns[3], (Vec2(model.size.z + 2 * model.size.x, 0) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[3], ns[3], (Vec2(model.size.z + model.size.x, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[7], ns[3], (Vec2(model.size.z + 2 * model.size.x, model.size.z) + model.texOffset) / textSize));
 
-			vertices.push_back(CubeModelVertice(ps[4], ns[4], (Vec2(2 * model.size.z + model.size.x, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[5], ns[4], (Vec2(2 * model.size.z + model.size.x, model.size.z + model.size.y) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[0], ns[4], (Vec2(2 * model.size.z + 2 * model.size.x, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[1], ns[4], (Vec2(2 * model.size.z + 2 * model.size.x, model.size.z + model.size.y) + model.texOffset) / 64.0f));
+			vertices.push_back(CubeModelVertice(ps[4], ns[4], (Vec2(2 * model.size.z + model.size.x, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[5], ns[4], (Vec2(2 * model.size.z + model.size.x, model.size.z + model.size.y) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[0], ns[4], (Vec2(2 * model.size.z + 2 * model.size.x, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[1], ns[4], (Vec2(2 * model.size.z + 2 * model.size.x, model.size.z + model.size.y) + model.texOffset) / textSize));
 
-			vertices.push_back(CubeModelVertice(ps[2], ns[5], (Vec2(model.size.z, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[3], ns[5], (Vec2(model.size.z, model.size.z + model.size.y) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[6], ns[5], (Vec2(model.size.z + model.size.x, model.size.z) + model.texOffset) / 64.0f));
-			vertices.push_back(CubeModelVertice(ps[7], ns[5], (Vec2(model.size.z + model.size.x, model.size.z + model.size.y) + model.texOffset) / 64.0f));
+			vertices.push_back(CubeModelVertice(ps[2], ns[5], (Vec2(model.size.z, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[3], ns[5], (Vec2(model.size.z, model.size.z + model.size.y) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[6], ns[5], (Vec2(model.size.z + model.size.x, model.size.z) + model.texOffset) / textSize));
+			vertices.push_back(CubeModelVertice(ps[7], ns[5], (Vec2(model.size.z + model.size.x, model.size.z + model.size.y) + model.texOffset) / textSize));
 		}
 		for (int i = 0; i < 24; i++)
 		{

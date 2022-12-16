@@ -24,7 +24,7 @@ Entities::PlayerEntity::PlayerEntity(const char* name, bool isSlim)
     MovementSpeed = 0.005f;
     Rotation = 0.0f;
     EyeHeight = 1.75f;
-	HitBox = Core::Util::Box(Core::Maths::Vec3(0.0f, 0.95f, 0.0f), Core::Maths::Vec3(0.55f, 1.9f, 0.55f));
+	HitBox = Core::Util::Box(Core::Maths::Vec3(0.0f, 0.95f, 0.0f), Core::Maths::Vec3(0.6f, 1.9f, 0.6f));
 	head = model.AddOrReplacePart("head", (new Model::BodyPart())->addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F)->texOffs(0, 0));
 	hat = model.AddOrReplacePart("hat", (new Model::BodyPart())->addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F)->extend(0.5f)->texOffs(32, 0));
 	body = model.AddOrReplacePart("body", (new Model::BodyPart())->addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F)->texOffs(16, 16));
@@ -76,11 +76,6 @@ void Entities::PlayerEntity::Update(float deltatime)
             attacking = false;
             attackTime = 0.0f;
         }
-    }
-    if (riding && crouching)
-    {
-        riding = false;
-        ridingEntity = nullptr;
     }
 	Entities::EntityLivingBase::Update(deltatime);
 }

@@ -5,6 +5,8 @@
 #include "Core/Debug/Gizmo.hpp"
 #include "Core/App/App.hpp"
 
+#include "Entities/PigEntity.hpp"
+
 #define DAY_LENGTH 15000
 
 World::World::World(double initTime, Resources::MeshManager* meshes, Resources::ShaderProgram* mainShader, Resources::ShaderProgram* litShader, int atlas)
@@ -37,6 +39,9 @@ World::World::World(double initTime, Resources::MeshManager* meshes, Resources::
 	entities[player2->uuid] = player2;
 	players[player->uuid] = player;
 	players[player2->uuid] = player2;
+	Entities::PigEntity* pig = new Entities::PigEntity();
+	pig->Position = Core::Maths::Vec3(2.5f, static_cast<int>(generator.wFunc(2, 0)) + 1.0f, 0.5f);
+	entities[pig->uuid] = pig;
 }
 
 World::World::~World()

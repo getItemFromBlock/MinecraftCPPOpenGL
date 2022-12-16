@@ -51,7 +51,7 @@ namespace Entities
 		EntityLivingBase* ridingEntity = nullptr;
 		float rotlerpRad(float a, float b, float c);
 		Resources::Texture entityTexture;
-		Vec3 getRidePosition(EntityLivingBase* entity);
+		virtual Vec3 getRidePosition(EntityLivingBase* entity);
 
 		friend class Physics::PhysicsHandler;
 	};
