@@ -9,6 +9,7 @@
 #include "LowRenderer/Lightning/ShadowMapBuffer.hpp"
 #include "LowRenderer/Rendering/Camera.hpp"
 #include "ChunkGenerator.hpp"
+#include "Chat/ChatHandler.hpp"
 
 namespace Physics
 {
@@ -21,7 +22,7 @@ namespace World
 	{
 		friend Physics::PhysicsHandler;
 	public:
-		World(double initTime, Resources::MeshManager* meshes, Resources::ShaderProgram* mainShader, Resources::ShaderProgram* litShader, int atlas);
+		World(double initTime, Resources::ResourceManager* manager, Resources::MeshManager* meshes, Resources::ShaderProgram* mainShader, Resources::ShaderProgram* litShader, Resources::ShaderProgram* textShader, int atlas);
 		~World();
 		Entities::ClientPlayerEntity* player;
 		unsigned int GetSeed();
@@ -43,10 +44,12 @@ namespace World
 		LowRenderer::Model SunModel;
 		Resources::ShaderProgram* MainShader;
 		Resources::ShaderProgram* LitShader;
+		Resources::ShaderProgram* TextShader;
 		LowRenderer::Rendering::Camera RenderCam;
 		int TextureAtlas = 0;
 		std::vector<Chunk*> UpdateList;
 		ChunkGenerator generator;
+		Chat::ChatHandler chat;
 
 		std::unordered_map<size_t, Entities::EntityLivingBase*> entities;
 		std::unordered_map<size_t, Entities::PlayerEntity*> players;

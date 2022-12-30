@@ -1,5 +1,7 @@
 #include "Core/Util/ThreadHandler.hpp"
 
+#include "Networking/Network.hpp"
+
 Core::Util::ThreadHandler::ThreadHandler()
 {
 	res = nullptr;

@@ -56,7 +56,7 @@ void EntityModel::Render(Core::Maths::Vec3 position, float rotation, World::Worl
 		if (currentCk) currentCk->SetupLightForRender(shaderProgram);
 		glUniformMatrix4fv(shaderProgram->GetLocation(Resources::ShaderData::MVP), 1, GL_FALSE, mvp.content);
 		glUniformMatrix4fv(shaderProgram->GetLocation(Resources::ShaderData::M), 1, GL_FALSE, modelMat.content);
-		if (texture)
+		if (texture && texture->IsLoaded())
 		{
 			glUniform1i(shaderProgram->GetLocation(Resources::ShaderData::Texture), texture->GetTextureID());
 		}

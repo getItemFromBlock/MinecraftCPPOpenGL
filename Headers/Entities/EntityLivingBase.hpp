@@ -39,6 +39,7 @@ namespace Entities
 
 		int getFallFlyingTicks();
 		bool isVisuallySwimming();
+		virtual Vec3 getRidePosition(EntityLivingBase* entity);
 
 		const Core::Util::Box& GetHitBox() { return HitBox; }
 	protected:
@@ -51,7 +52,6 @@ namespace Entities
 		EntityLivingBase* ridingEntity = nullptr;
 		float rotlerpRad(float a, float b, float c);
 		Resources::Texture entityTexture;
-		virtual Vec3 getRidePosition(EntityLivingBase* entity);
 
 		friend class Physics::PhysicsHandler;
 	};

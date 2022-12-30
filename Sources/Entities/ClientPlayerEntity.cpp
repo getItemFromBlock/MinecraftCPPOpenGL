@@ -15,29 +15,32 @@ Entities::ClientPlayerEntity::ClientPlayerEntity(const char* name, bool isSlim) 
 
 void Entities::ClientPlayerEntity::Update(float deltatime)
 {
-	if (ImGui::IsKeyPressed(Bindings[static_cast<unsigned int>(Core::App::InputType::View)]))
-	{
-		viewMode = GetNext();
-	}
 	MovementOut = Vec3();
-	for (unsigned int i = 0; i < 4; i++)
-	{
-		unsigned int index = (i < 2) ? 2 : 0;
-		if (ImGui::IsKeyDown(Bindings[i])) MovementOut[index] += (i % 2 == 0 ? 1.0f : -1.0f);
-	}
-	if (MovementOut.getLength() < 0.1f) MovementOut = Core::Maths::Vec3();
-	else if (MovementOut.getLength() > 1.0f) MovementOut = MovementOut.unitVector();
-	MovementOut = (Core::Maths::Mat4::CreateYRotationMatrix(ViewRotation.y) * MovementOut).getVector();
-	if (ImGui::IsKeyPressed(Bindings[static_cast<unsigned int>(Core::App::InputType::Jump)])) Jump();
-	crouching = ImGui::IsKeyDown(Bindings[static_cast<unsigned int>(Core::App::InputType::Crouch)]);
 	effectiveSpeed = 1.0f;
-	if (crouching)
+	if (!mFocused)
 	{
-		effectiveSpeed = 0.4f;
-	}
-	else if (ImGui::IsKeyDown(Bindings[static_cast<unsigned int>(Core::App::InputType::Run)]))
-	{
-		effectiveSpeed = 1.6f;
+		if (ImGui::IsKeyPressed(Bindings[static_cast<unsigned int>(Core::App::InputType::View)]))
+		{
+			viewMode = GetNext();
+		}
+		for (unsigned int i = 0; i < 4; i++)
+		{
+			unsigned int index = (i < 2) ? 2 : 0;
+			if (ImGui::IsKeyDown(Bindings[i])) MovementOut[index] += (i % 2 == 0 ? 1.0f : -1.0f);
+		}
+		if (MovementOut.getLength() < 0.1f) MovementOut = Core::Maths::Vec3();
+		else if (MovementOut.getLength() > 1.0f) MovementOut = MovementOut.unitVector();
+		MovementOut = (Core::Maths::Mat4::CreateYRotationMatrix(ViewRotation.y) * MovementOut).getVector();
+		if (ImGui::IsKeyPressed(Bindings[static_cast<unsigned int>(Core::App::InputType::Jump)])) Jump();
+		crouching = ImGui::IsKeyDown(Bindings[static_cast<unsigned int>(Core::App::InputType::Crouch)]);
+		if (crouching)
+		{
+			effectiveSpeed = 0.4f;
+		}
+		else if (ImGui::IsKeyDown(Bindings[static_cast<unsigned int>(Core::App::InputType::Run)]))
+		{
+			effectiveSpeed = 1.6f;
+		}
 	}
 	Entities::PlayerEntity::Update(deltatime);
 }
@@ -75,6 +78,25 @@ void Entities::ClientPlayerEntity::Jump()
 
 void Entities::ClientPlayerEntity::ClientUpdate(float deltatime, World::World* world)
 {
+	if (riding)
+	{
+		if (crouching)
+		{
+			riding = false;
+			ridingEntity = nullptr;
+		}
+		else if (ridingEntity)
+		{
+			Position = ridingEntity->getRidePosition(this);
+			Entities::PigEntity* pig = dynamic_cast<Entities::PigEntity*>(ridingEntity);
+			if (pig)
+			{
+				pig->MovementOut = MovementOut;
+				pig->Rotation = Rotation;
+				pig->ViewRotation.y = ViewRotation.y;
+			}
+		}
+	}
 	camera->Update(*inputs, Position + Core::Maths::Vec3(0.0f, EyeHeight, 0.0f), viewMode, deltatime);
 	ViewRotation = Core::Maths::Vec3(camera->rotation.y, camera->rotation.x + 180, camera->rotation.z);
 	Rotation = ViewRotation.y;
@@ -127,29 +149,16 @@ void Entities::ClientPlayerEntity::ClientUpdate(float deltatime, World::World* w
 			}
 		}
 	}
-	if (riding)
-	{
-		if (crouching)
-		{
-			riding = false;
-			ridingEntity = nullptr;
-		}
-		else if (ridingEntity)
-		{
-			Entities::PigEntity* pig = dynamic_cast<Entities::PigEntity*>(ridingEntity);
-			if (pig)
-			{
-				pig->MovementOut = MovementOut;
-				pig->Rotation = Rotation;
-				pig->ViewRotation.y = ViewRotation.y;
-			}
-		}
-	}
 }
 
 BLOCK Entities::ClientPlayerEntity::GetSelectedBlock()
 {
 	return selectedBlock;
+}
+
+void Entities::ClientPlayerEntity::SetFocusState(bool focused)
+{
+	mFocused = focused;
 }
 
 CameraViewMode Entities::ClientPlayerEntity::GetNext()

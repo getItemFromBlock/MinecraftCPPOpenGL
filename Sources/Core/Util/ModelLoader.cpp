@@ -88,6 +88,8 @@ unsigned int GenerateVerticesUnoptimized(Core::Util::LoaderData* args, unsigned 
 	unsigned int count = 0;
 	for (unsigned int i = 0; i < args->tris->at(modelIndex).size(); i++)
 	{
+		LOGRAW("Triangle(");
+		Core::Maths::Vec3 A;
 		for (int n = 0; n < 3; n++)
 		{
 			unsigned int vertice = args->tris->at(modelIndex).at(i).vertice[n];
@@ -103,10 +105,26 @@ unsigned int GenerateVerticesUnoptimized(Core::Util::LoaderData* args, unsigned 
 			{
 				data.UV = args->UVs->at(texture);
 			}
+			if (n == 0)
+			{
+				A = data.pos;
+				LOGRAW("vec3(%.6f,%.6f,%.6f),", data.pos.x, data.pos.y, data.pos.z);
+			}
+			else
+			{
+				Core::Maths::Vec3 dif = data.pos - A;
+				LOGRAW("vec3(%.6f,%.6f,%.6f),", dif.x, dif.y, dif.z);
+			}
+			if (n == 2)
+			{
+				LOGRAW("vec3(%.6f,%.6f,%.6f),", data.norm.x, data.norm.y, data.norm.z);
+			}
 			args->indexesOut->at(modelIndex).push_back((unsigned int)args->verticesOut->size());
 			args->verticesOut->push_back(data);
 			count++;
 		}
+		Core::Maths::Vec3 color = args->mats->at(modelIndex)->DiffuseColor;
+		LOGRAW("vec3(%.6f,%.6f,%.6f)),\n", color.x, color.y, color.z);
 	}
 	return count;
 }
@@ -444,6 +462,7 @@ void Core::Util::ModelLoader::MeshLoaderThread(LowRenderer::Model& in, const cha
 			else
 			{
 				current->indexCount = GenerateVertices(&args, i, type);
+				//current->indexCount = GenerateVerticesUnoptimized(&args, i, type);
 			}
 		}
 		else

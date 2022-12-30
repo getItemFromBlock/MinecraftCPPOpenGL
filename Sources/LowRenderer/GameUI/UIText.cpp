@@ -51,7 +51,7 @@ void LowRenderer::GameUI::UIText::RenderGameUI(unsigned int& VAOCurrent, Resourc
 	{
 		TextMat = Core::Maths::Mat4::CreateTransformMatrix(ElementMat.GetPositionFromTranslation(), 0, 0.01f * TextSize);
 		Core::Maths::Mat4 mv2 = v * TextMat;
-		glUniform1i((*shaderProgramCurrent)->GetLocation(Resources::ShaderData::Texture), Core::App::DefaultTextures::Default_Font);
+		glUniform1i((*shaderProgramCurrent)->GetLocation(Resources::ShaderData::Texture), MFont->BindForRender());
 		glUniformMatrix4fv((*shaderProgramCurrent)->GetLocation(Resources::ShaderData::MVP), 1, GL_FALSE, mv2.content);
 		glUniform3f((*shaderProgramCurrent)->GetLocation(Resources::ShaderData::MatAmbient), TextColor.x, TextColor.y, TextColor.z);
 		glUniform1f((*shaderProgramCurrent)->GetLocation(Resources::ShaderData::MatAlpha), -1);

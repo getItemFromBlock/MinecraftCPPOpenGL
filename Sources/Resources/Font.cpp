@@ -12,8 +12,12 @@ void Resources::Font::Load(const char* path)
 {
 	ShouldDeleteData = false;
 	Texture::Load(path);
+}
+
+void Resources::Font::EndLoad()
+{
+	Texture::EndLoad();
 	GenerateSpacings();
-	Texture::DeleteData();
 }
 
 void Resources::Font::UnLoad()

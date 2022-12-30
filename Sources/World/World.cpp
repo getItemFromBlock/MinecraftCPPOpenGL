@@ -9,13 +9,14 @@
 
 #define DAY_LENGTH 15000
 
-World::World::World(double initTime, Resources::MeshManager* meshes, Resources::ShaderProgram* mainShader, Resources::ShaderProgram* litShader, int atlas)
+World::World::World(double initTime, Resources::ResourceManager* manager, Resources::MeshManager* meshes, Resources::ShaderProgram* mainShader, Resources::ShaderProgram* litShader, Resources::ShaderProgram* textShader, int atlas)
 	: deltaITime(initTime)
 {
 	SunModel.CreateFrom(meshes->GetModels("DebugPlane").at(0)->model);
 	SunModel.shaderProgram = litShader;
 	MainShader = mainShader;
 	LitShader = litShader;
+	TextShader = textShader;
 	TextureAtlas = atlas;
 	shadowMap.SetShadowMapResolution(2048);
 	shadowMap.Load("MainShadowMap");
@@ -26,6 +27,8 @@ World::World::World(double initTime, Resources::MeshManager* meshes, Resources::
 	RenderCam.fov = 40.0f;
 
 	generator.InitThread(this);
+
+	chat.SetData(manager->Get<Resources::Mesh>("DebugPlane"), manager->Get<Resources::Font>("DefaultResources/Font/default_font.png"));
 
 	GenerateChunk(Core::Maths::IVec3(0, 0, 0));
 	GenerateChunk(Core::Maths::IVec3(-1, 0, 0));
@@ -122,6 +125,8 @@ void World::World::AddToAsyncUpdate(Chunk* in)
 void World::World::UpdateWorld(double systemTime, float deltaTime)
 {
 	worldTime = static_cast<int64_t>((systemTime - deltaITime) * 20.0);
+	chat.Update(deltaTime);
+	player->SetFocusState(chat.IsFocused());
 	for (auto e = entities.begin(); e != entities.end(); e++)
 	{
 		Entities::EntityLivingBase* entity = e->second;
@@ -273,6 +278,11 @@ void World::World::RenderWorld(unsigned int& VAOCurrent, Resources::ShaderProgra
 	SunModel.modelMat = MoonMat;
 	SunModel.SetColor(Core::Maths::Vec3(0.8f, 0.8f, 1.0f));
 	SunModel.Render(VAOCurrent, shaderProgram, vp, nullptr);
+	
+	glUseProgram(TextShader->GetProgramID());
+	*shaderProgram = TextShader;
+	chat.Render(VAOCurrent, shaderProgram);
+	
 }
 
 void World::World::UpdateBlockRender(Core::Maths::IVec3 pos)

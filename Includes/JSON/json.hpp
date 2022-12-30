@@ -10547,7 +10547,7 @@ namespace nlohmann
             {
                 if (get_char)
                 {
-                    get();  // TODO(niels): may we ignore N here?
+                    get();  // TO DO(niels): may we ignore N here?
                 }
 
                 if (JSON_HEDLEY_UNLIKELY(!unexpect_eof(input_format, "value")))

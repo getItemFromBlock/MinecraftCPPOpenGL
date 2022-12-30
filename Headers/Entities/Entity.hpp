@@ -6,6 +6,7 @@
 namespace Resources
 {
 	class ResourceManager;
+	class Texture;
 }
 
 namespace Entities
@@ -23,5 +24,6 @@ namespace Entities
 		size_t uuid;
 	protected:
 		static Resources::ResourceManager* manager;
+		Resources::Texture* texture = nullptr;
 	};
 }

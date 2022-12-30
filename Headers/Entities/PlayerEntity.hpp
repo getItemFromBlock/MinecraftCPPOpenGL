@@ -3,7 +3,6 @@
 #include "EntityLivingBase.hpp"
 #include "Resources/ShaderProgram.hpp"
 #include "Model/ArmPose.hpp"
-#include "Resources/PlayerTexture.hpp"
 
 namespace Entities
 {
@@ -18,26 +17,25 @@ namespace Entities
 		virtual void OnDeath() override;
 		virtual void Render(World::World* worldIn, Resources::ShaderProgram* shaderProgram, unsigned int& VAOCurrent, const Core::Maths::Mat4& vp, bool IsShadowMap) override;
 		virtual void SetupAnim(float deltaTime, float globalTime) override;
+		virtual Vec3 getRidePosition(EntityLivingBase* entity) override;
 	protected:
-		Model::BodyPart* head;
-		Model::BodyPart* hat;
-		Model::BodyPart* body;
-		Model::BodyPart* rightArm;
-		Model::BodyPart* leftArm;
-		Model::BodyPart* rightLeg;
-		Model::BodyPart* leftLeg;
+		Model::BodyPart* head = nullptr;
+		Model::BodyPart* hat = nullptr;
+		Model::BodyPart* body = nullptr;
+		Model::BodyPart* rightArm = nullptr;
+		Model::BodyPart* leftArm = nullptr;
+		Model::BodyPart* rightLeg = nullptr;
+		Model::BodyPart* leftLeg = nullptr;
 
-		Model::BodyPart* leftSleeve;
-		Model::BodyPart* rightSleeve;
-		Model::BodyPart* leftPants;
-		Model::BodyPart* rightPants;
-		Model::BodyPart* jacket;
-		Model::BodyPart* cloak;
+		Model::BodyPart* leftSleeve = nullptr;
+		Model::BodyPart* rightSleeve = nullptr;
+		Model::BodyPart* leftPants = nullptr;
+		Model::BodyPart* rightPants = nullptr;
+		Model::BodyPart* jacket = nullptr;
+		Model::BodyPart* cloak = nullptr;
 
 		ArmPose rightArmPose = ArmPose::ITEM;
 		ArmPose leftArmPose = ArmPose::EMPTY;
-
-		Resources::PlayerTexture* texture = nullptr;
 
 		bool leftHanded = false;
 		bool crouching = false;

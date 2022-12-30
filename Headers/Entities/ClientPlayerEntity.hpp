@@ -30,12 +30,14 @@ namespace Entities
 		virtual void Jump() override;
 		void ClientUpdate(float deltatime, World::World* world);
 		BLOCK GetSelectedBlock();
+		void SetFocusState(bool focused);
 	protected:
 		int* Bindings = nullptr;
 		LowRenderer::Rendering::EditorCamera* camera = nullptr;
 		Core::App::Inputs* inputs = nullptr;
 		BLOCK selectedBlock = BLOCK::COBBLESTONE;
 		CameraViewMode viewMode = CameraViewMode::DEFAULT;
+		bool mFocused = false;
 
 		CameraViewMode GetNext();
 	};

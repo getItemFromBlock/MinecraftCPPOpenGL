@@ -11,6 +11,7 @@ namespace Resources
 		~Font();
 
 		virtual void Load(const char* path) override;
+		virtual void EndLoad() override;
 		virtual void UnLoad() override;
 
 		float GetSpacing(unsigned char i) { return FontSpacings[i]; }

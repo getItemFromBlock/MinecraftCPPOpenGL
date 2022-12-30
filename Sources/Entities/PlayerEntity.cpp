@@ -2,6 +2,7 @@
 
 #include "Core/Debug/Log.hpp"
 #include "Core/App/App.hpp"
+#include "Resources/PlayerTexture.hpp"
 
 Entities::PlayerEntity::PlayerEntity(const char* name, bool isSlim)
 {
@@ -12,11 +13,15 @@ Entities::PlayerEntity::PlayerEntity(const char* name, bool isSlim)
     }
     else
     {
-        std::string texPath = "PlayerTextures/";
-        texPath = texPath.append(name);
-        texture = manager->Create<Resources::PlayerTexture>(texPath.c_str(), false);
-        manager->PushResourceToLoader(texture, texPath.c_str());
-        // TODO
+        std::string texPath = "Resources/textures/player/";
+        texPath = texPath.append(name).append(".png");
+        texture = manager->Get<Resources::Texture>(texPath.c_str());
+        if (!texture)
+        {
+            texture = manager->Create<Resources::PlayerTexture>(texPath.c_str(), false);
+            manager->PushResourceToLoader(texture, texPath.c_str());
+        }
+        model.SetTexture(texture);
     }
     OnGround = true;
     MaxHealth = 20.0f;
@@ -277,6 +282,11 @@ void Entities::PlayerEntity::SetupAnim(float deltaTime, float globalTime)
         cloak->offset.z = -1.1F;
         cloak->offset.y = -0.85F;
     }
+}
+
+Vec3 Entities::PlayerEntity::getRidePosition(EntityLivingBase* entity)
+{
+    return Position + Vec3(0.0f, 1.4f, 0.0f);
 }
 
 bool Entities::PlayerEntity::isUsingItem()

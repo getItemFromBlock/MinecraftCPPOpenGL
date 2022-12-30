@@ -18,6 +18,11 @@
 #include "Core/Maths/PRNG.hpp"
 #include "Blocks/Blocks.hpp"
 
+namespace Networking
+{
+	class Network;
+}
+
 namespace Core::App
 {
 	enum class MouseInput : unsigned int
@@ -50,6 +55,8 @@ namespace Core::App
 		Drop,
 		Swap,
 		Inventory,
+		Chat,
+		Command,
 		View,
 		All,
 	};
@@ -106,6 +113,7 @@ namespace Core::App
 		Core::Debug::FrameGraph frameGraph;
 		Resources::ResourceManager res;
 		Physics::PhysicsHandler physics;
+		Networking::Network* network = nullptr;
 		
 		bool ortho = false;
 		bool vsync = true;

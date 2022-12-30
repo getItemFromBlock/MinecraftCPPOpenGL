@@ -8,7 +8,7 @@ namespace Networking
 		Network();
 		~Network();
 
+		bool isValid = false;
 	private:
-
 	};
 }

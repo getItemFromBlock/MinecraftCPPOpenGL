@@ -8,8 +8,8 @@
 #include "Core/Maths/Maths.hpp"
 #include "Resources/ResourceLoader.hpp"
 #include "Resources/TextureAtlas.hpp"
-
 #include "World/World.hpp"
+#include "Networking/Network.hpp"
 
 #include <ImGUI/imgui.h>
 #include <ImGUI/imgui_impl_glfw.h>
@@ -37,6 +37,7 @@ namespace Core::App
 
 	int App::InitApp(const AppInit& data)
 	{
+		
 		glfwInit();
 		//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, data.majorVersion);
 		//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, data.minorVersion);
@@ -59,6 +60,7 @@ namespace Core::App
 		if (windowIcon) glfwSetWindowIcon(window,1,windowIcon);
 		//glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
 		inputs.InitInputs(window, Core::Maths::IVec2(data.width, data.height));
+		network = new Networking::Network();
 		return InitOpenGL(data);
 	}
 
@@ -105,6 +107,8 @@ namespace Core::App
 		InputBindings[static_cast<unsigned int>(InputType::Drop)] = ImGuiKey_Q;
 		InputBindings[static_cast<unsigned int>(InputType::Swap)] = ImGuiKey_F;
 		InputBindings[static_cast<unsigned int>(InputType::Inventory)] = ImGuiKey_E;
+		InputBindings[static_cast<unsigned int>(InputType::Chat)] = ImGuiKey_T;
+		InputBindings[static_cast<unsigned int>(InputType::Command)] = ImGuiKey_Slash;
 		InputBindings[static_cast<unsigned int>(InputType::View)] = ImGuiKey_F5;
 		Resources::Texture::SetFilterType(GL_NEAREST);
 		res.SetPathAutoAppend(true);
@@ -154,6 +158,12 @@ namespace Core::App
 		shaders.AddShader(vert);
 		shaders.CreateShaderProgram(vert, frag, "UI Shader");
 
+		frag = res.Create<Resources::FragmentShader>("DefaultResources/Shaders/text_fragment.frag");
+		shaders.AddShader(frag);
+		vert = res.Create<Resources::VertexShader>("DefaultResources/Shaders/text_vertex.vert");
+		shaders.AddShader(vert);
+		shaders.CreateShaderProgram(vert, frag, "Text Shader");
+
 		// TODO load world
 
 		glEnable(GL_DEPTH_TEST);
@@ -170,13 +180,14 @@ namespace Core::App
 		Entities::Entity::SetResourceManager(&res);
 		Resources::ShaderProgram* MainShader = shaders.GetShaderProgram("default shader");
 		Resources::ShaderProgram* LitShader = shaders.GetShaderProgram("lit shader");
+		Resources::ShaderProgram* TextShader = shaders.GetShaderProgram("text shader");
 		Resources::TextureAtlas atlas = Resources::TextureAtlas(Core::Maths::IVec2(1024, 1024));
 		textures.LoadAtlas(atlas);
 		textures.LoadTextures(&res);
 		Blocks::BlockRegister::RegisterBlocks(&atlas);
 		//Resources::Texture::SaveImage("atlas", (unsigned char*)atlas.GetData(), 1024, 1024);
 		atlas.Load();
-		world = new World::World(glfwGetTime(), &meshes, MainShader, LitShader, atlas.GetID());
+		world = new World::World(glfwGetTime(), &res, &meshes, MainShader, LitShader, TextShader, atlas.GetID());
 		seed = world->GetSeed();
 		LowRenderer::Model debug;
 		debug.CreateFrom(meshes.GetModels("DebugCube").at(0)->model);
@@ -186,6 +197,7 @@ namespace Core::App
 		glUniform3f(MainShader->GetLocation(Resources::ShaderData::MatAmbient), 1.0f, 1.0f, 1.0f);
 		shaderProgram = MainShader;
 		shadowMapID = world->shadowMap.GetTextureID();
+
 		while (!glfwWindowShouldClose(window))
 		{
 			res.Update();
@@ -287,7 +299,6 @@ namespace Core::App
 
 	void App::ClearApp()
 	{
-		// TODO destroy world
 		meshes.ClearModels();
 		materials.ClearMaterials();
 		frameGraph.Destroy();
@@ -303,6 +314,7 @@ namespace Core::App
 		delete[] windowIcon->pixels;
 		delete windowIcon;
 		delete world;
+		delete network;
 	}
 
 	App::App()

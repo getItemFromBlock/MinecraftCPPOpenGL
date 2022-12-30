@@ -152,10 +152,16 @@ void Resources::TextureManager::LoadAtlas(Resources::TextureAtlas& atlas)
 
 void Resources::TextureManager::LoadTextures(ResourceManager* manager)
 {
-	std::string path = "Resources/textures/entity/";
+	std::string pathE = "Resources/textures/entity/";
+	std::string pathP = "Resources/textures/player/";
 	std::vector<std::string> files;
 	std::vector<std::string> exts;
-	for (const auto& entry : fs::recursive_directory_iterator(path))
+	for (const auto& entry : fs::recursive_directory_iterator(pathE))
+	{
+		files.push_back(entry.path().generic_string());
+		exts.push_back(entry.path().extension().generic_string());
+	}
+	for (const auto& entry : fs::recursive_directory_iterator(pathP))
 	{
 		files.push_back(entry.path().generic_string());
 		exts.push_back(entry.path().extension().generic_string());
@@ -165,15 +171,8 @@ void Resources::TextureManager::LoadTextures(ResourceManager* manager)
 		if (!exts[i].c_str()[0]) continue;
 		else if (!exts[i].compare(".png") || !exts[i].compare(".jpg"))
 		{
-			Texture* tex = manager->Create<Texture>(files[i].c_str(), true);
-			if (tex)
-			{
-				/*
-				textures.push_back(tex);
-				manager->PushResourceToLoader(tex, files[i].c_str());
-				*/
-			}
-			else
+			Texture* tex = manager->Create<Texture>(files[i].c_str());
+			if (!tex)
 			{
 				LOG("Very scary: %s", files[i].c_str());
 			}

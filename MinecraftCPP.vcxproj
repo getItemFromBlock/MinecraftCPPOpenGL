@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -161,6 +161,8 @@
     <ClCompile Include="Sources\Blocks\StairBlock.cpp" />
     <ClCompile Include="Sources\Blocks\TorchBlock.cpp" />
     <ClCompile Include="Sources\Blocks\TransparentBlock.cpp" />
+    <ClCompile Include="Sources\Chat\ChatHandler.cpp" />
+    <ClCompile Include="Sources\Chat\ChatMessage.cpp" />
     <ClCompile Include="Sources\Core\Debug\Gizmo.cpp" />
     <ClCompile Include="Sources\Core\Maths\PRNG.cpp" />
     <ClCompile Include="Sources\Core\Util\HitBox.cpp" />
@@ -176,6 +178,20 @@
     <ClCompile Include="Sources\Entities\Model\EntityModel.cpp" />
     <ClCompile Include="Sources\Entities\PigEntity.cpp" />
     <ClCompile Include="Sources\Entities\PlayerEntity.cpp" />
+    <ClCompile Include="Sources\Networking\Address.cpp" />
+    <ClCompile Include="Sources\Networking\Errors.cpp" />
+    <ClCompile Include="Sources\Networking\Network.cpp" />
+    <ClCompile Include="Sources\Networking\Serialization\Conversion.cpp" />
+    <ClCompile Include="Sources\Networking\Sockets.cpp" />
+    <ClCompile Include="Sources\Networking\TCP\TCPSocket.cpp" />
+    <ClCompile Include="Sources\Networking\UDP\AckHandler.cpp" />
+    <ClCompile Include="Sources\Networking\UDP\ChannelsHandler.cpp" />
+    <ClCompile Include="Sources\Networking\UDP\Client.cpp" />
+    <ClCompile Include="Sources\Networking\UDP\DistantClient.cpp" />
+    <ClCompile Include="Sources\Networking\UDP\Protocols\ReliableOrdered.cpp" />
+    <ClCompile Include="Sources\Networking\UDP\Protocols\UnreliableOrdered.cpp" />
+    <ClCompile Include="Sources\Networking\UDP\Simulator.cpp" />
+    <ClCompile Include="Sources\Networking\Utils.cpp" />
     <ClCompile Include="Sources\Resources\PlayerTexture.cpp" />
     <ClCompile Include="Sources\Resources\TextureAtlas.cpp" />
     <ClCompile Include="Sources\World\ChunkGenerator.cpp" />
@@ -244,6 +260,7 @@
     <ClInclude Include="Headers\Blocks\SlabBlock.hpp" />
     <ClInclude Include="Headers\Blocks\TorchBlock.hpp" />
     <ClInclude Include="Headers\Blocks\TransparentBlock.hpp" />
+    <ClInclude Include="Headers\Chat\ChatTextElement.hpp" />
     <ClInclude Include="Headers\Core\Debug\Gizmo.hpp" />
     <ClInclude Include="Headers\Core\Maths\PRNG.hpp" />
     <ClInclude Include="Headers\Core\Util\HitBox.hpp" />
@@ -263,6 +280,7 @@
     <ClInclude Include="Headers\Core\Util\Signal.hpp" />
     <ClInclude Include="Headers\Core\Util\TextHelper.hpp" />
     <ClInclude Include="Headers\Core\Util\ThreadHandler.hpp" />
+    <ClInclude Include="Headers\Core\Util\Types.hpp" />
     <ClInclude Include="Headers\Entities\ClientPlayerEntity.hpp" />
     <ClInclude Include="Headers\Entities\Entity.hpp" />
     <ClInclude Include="Headers\Entities\EntityLivingBase.hpp" />
@@ -289,7 +307,26 @@
     <ClInclude Include="Headers\LowRenderer\Rendering\FrameBuffer.hpp" />
     <ClInclude Include="Headers\LowRenderer\Rendering\ReflectionCamera.hpp" />
     <ClInclude Include="Headers\LowRenderer\Rendering\RenderCamera.hpp" />
+    <ClInclude Include="Headers\Networking\Address.hpp" />
+    <ClInclude Include="Headers\Networking\NetworkSettings.hpp" />
+    <ClInclude Include="Headers\Networking\Errors.hpp" />
+    <ClInclude Include="Headers\Networking\NetworkTest.hpp" />
+    <ClInclude Include="Headers\Networking\NetworkTestTWO.hpp" />
+    <ClInclude Include="Headers\Networking\Serialization\Conversion.hpp" />
+    <ClInclude Include="Headers\Networking\UDP\AckHandler.hpp" />
+    <ClInclude Include="Headers\Networking\UDP\ChannelsHandler.hpp" />
+    <ClInclude Include="Headers\Networking\UDP\Client.hpp" />
+    <ClInclude Include="Headers\Networking\UDP\Datagram.hpp" />
     <ClInclude Include="Headers\Networking\Network.hpp" />
+    <ClInclude Include="Headers\Networking\Sockets.hpp" />
+    <ClInclude Include="Headers\Networking\TCP\TCPSocket.hpp" />
+    <ClInclude Include="Headers\Networking\UDP\DistantClient.hpp" />
+    <ClInclude Include="Headers\Networking\UDP\Protocols\Packet.hpp" />
+    <ClInclude Include="Headers\Networking\UDP\Protocols\ProtocolInterface.hpp" />
+    <ClInclude Include="Headers\Networking\UDP\Protocols\ReliableOrdered.hpp" />
+    <ClInclude Include="Headers\Networking\UDP\Protocols\UnreliableOrdered.hpp" />
+    <ClInclude Include="Headers\Networking\UDP\Simulator.hpp" />
+    <ClInclude Include="Headers\Networking\Utils.hpp" />
     <ClInclude Include="Headers\Physics\PhysicsHandler.hpp" />
     <ClInclude Include="Headers\Physics\RigidBody.hpp" />
     <ClInclude Include="Headers\Physics\Transform.hpp" />
@@ -310,6 +347,8 @@
     <ClInclude Include="Headers\Resources\TextureManager.hpp" />
     <ClInclude Include="Headers\Blocks\Block.hpp" />
     <ClInclude Include="Headers\Blocks\Blocks.hpp" />
+    <ClInclude Include="Headers\Chat\ChatHandler.hpp" />
+    <ClInclude Include="Headers\Chat\ChatMessage.hpp" />
     <ClInclude Include="Headers\World\Chunk.hpp" />
     <ClInclude Include="Headers\World\ChunkModel.hpp" />
     <ClInclude Include="Headers\World\ChunkGenerator.hpp" />
@@ -328,11 +367,13 @@
     <ClInclude Include="Includes\ImGUI\imstb_truetype.h" />
     <ClInclude Include="Includes\JSON\json.hpp" />
     <ClInclude Include="Headers\Core\Util\JsonReader.hpp" />
+    <ClInclude Include="Headers\Networking\Messages.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Headers\Core\DataStructure\NameSearcher.inl" />
     <None Include="Headers\Core\Maths\Maths.inl" />
     <None Include="Headers\Core\Util\TextHelper.inl" />
+    <None Include="Headers\Networking\Utils.inl" />
     <None Include="Headers\Resources\ResourceManager.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
