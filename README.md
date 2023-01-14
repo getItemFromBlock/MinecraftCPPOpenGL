@@ -31,13 +31,13 @@ Use the given Visual studio project file (.sln) to generate the solution
         screenshots :
     </summary>
             <ol><b>
-            <img src="ScreenShots/a.png" width="" height="300">
+            <img src="Screenshots/a.png" width="" height="300">
             <br>
-            <img src="ScreenShots/b.png" width="" height="300">
+            <img src="Screenshots/b.png" width="" height="300">
             <br>
-            <img src="ScreenShots/c.png" width="" height="300"></li>
+            <img src="Screenshots/c.png" width="" height="300"></li>
             <br>
-            <img src="ScreenShots/d.png" width="" height="300"></li>
+            <img src="Screenshots/d.png" width="" height="300"></li>
     </b></ol>
 </ul>
 </div>
